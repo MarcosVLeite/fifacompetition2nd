@@ -89,12 +89,12 @@ function Index() {
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
             <h1 id="event-title" className="hero-title"><img src={cnaLogo.url} alt="CNA" width={1774} height={887} className="hero-logo" decoding="async" />FIFA<br /><span className="text-primary">COMPETITION</span></h1>
-            <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao próximo nível.</p>
+            <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao <span className="text-info">próximo nível</span>.</p>
             <div className="hero-actions">
               <Button variant="arena" className="h-13 px-7 text-base" onClick={openRegistration}>Quero entrar em campo <ArrowUpRight size={19} /></Button>
               <Button variant="ghost" className="h-13 px-0 text-sm" onClick={viewEvent}>Conheça o campeonato <ArrowDown /></Button>
             </div>
-            <div className="hero-footnote"><Users size={15} /> R$ 20 por dupla <span className="mx-1">·</span> Evento presencial</div>
+            <div className="hero-footnote"><Users size={15} /> <span className="text-info">R$ 20 por dupla</span> <span className="mx-1">·</span> Evento presencial</div>
           </div>
         </section>
 
@@ -103,17 +103,17 @@ function Index() {
             <div className="event-fact"><CalendarDays /><div><small>Marque na agenda</small><strong>05 de dezembro</strong></div></div>
             <div className="event-fact"><Clock3 /><div><small>Apito inicial</small><strong>14h <span className="text-muted-foreground font-normal">/ 2:00 p.m.</span></strong></div></div>
             <div className="event-fact"><MapPin /><div><small>Nosso campo</small><strong>CNA Itapecerica da Serra</strong></div></div>
-            <div className="event-fact"><Ticket /><div><small>Inscrição</small><strong>R$ 20 por dupla</strong></div></div>
+            <div className="event-fact"><Ticket /><div><small>Inscrição</small><strong className="text-info">R$ 20 por dupla</strong></div></div>
           </div>
 
           <section id="campeonato" className="section scroll-mt-6">
             <div className="section-label eyebrow"><span>01 /</span> O campeonato</div>
             <div className="editorial-grid">
-              <div><h2 className="section-title">DOIS JOGADORES.<br />UM SÓ <span className="text-primary">OBJETIVO.</span></h2><p className="section-copy mt-5 max-w-md">O futebol conecta. O FIFA coloca essa conexão em jogo. A segunda edição da CNA FIFA Competition chega ao CNA Itapecerica da Serra para reunir quem ama uma boa disputa.</p><p className="section-copy mt-4 max-w-md">Aqui, ninguém entra em campo sozinho. Traga sua dupla e venha viver cada passe, cada defesa e cada gol.</p></div>
+              <div><h2 className="section-title">DOIS JOGADORES.<br />UM SÓ <span className="text-primary">OBJETIVO.</span></h2><p className="section-copy mt-5 max-w-md">O futebol conecta. O FIFA coloca essa <span className="text-info">conexão</span> em jogo. A segunda edição da CNA FIFA Competition chega ao CNA Itapecerica da Serra para reunir quem ama uma boa disputa.</p><p className="section-copy mt-4 max-w-md">Aqui, ninguém entra em campo sozinho. <span className="text-info">Traga sua dupla</span> e venha viver cada passe, cada defesa e cada gol.</p></div>
               <div>
                 <div className="format-row"><Users /><div><h3>Seu parceiro faz parte do jogo</h3><p>O campeonato é disputado em duplas. Escolha quem vai dividir o controle e a torcida com você.</p></div></div>
                 <div className="format-row"><Gamepad2 /><div><h3>Do controle para a competição</h3><p>Uma disputa presencial de FIFA, com toda a energia de jogar lado a lado.</p></div></div>
-                <div className="format-row"><Ticket /><div><h3>Uma inscrição, dois jogadores</h3><p>A taxa é de R$ 20 para a dupla inteira. É só reunir seu parceiro e se preparar.</p></div></div>
+                <div className="format-row"><Ticket /><div><h3>Uma inscrição, dois jogadores</h3><p>A taxa é de <span className="text-info">R$ 20 para a dupla inteira</span>. É só reunir seu parceiro e se preparar.</p></div></div>
               </div>
             </div>
           </section>
