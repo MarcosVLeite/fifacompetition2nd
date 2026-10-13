@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";
-import cnaLogo from "@/assets/cna-logo.png.asset.json";
+import cnaTrofeu from "@/assets/cna-trofeu.png.asset.json";
 
 const description = "Monte sua dupla para o CNA FIFA COMPETITION no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
 export const Route = createFileRoute("/")({
@@ -75,7 +75,7 @@ function Index() {
     <>
       <header className="site-wrap site-header">
         <div className="flex items-center gap-3" aria-label="CNA FIFA COMPETITION">
-          <span className="brand-icon"><Trophy size={25} strokeWidth={2} /></span>
+          <img src={cnaTrofeu.url} alt="CNA" width={1635} height={505} className="brand-logo" decoding="async" />
           <span className="event-wordmark">CNA FIFA<br /><span className="text-muted-foreground">COMPETITION</span></span>
         </div>
         <div className="header-place flex items-center gap-2 text-sm text-muted-foreground"><MapPin size={15} /> CNA Itapecerica da Serra</div>
@@ -88,7 +88,7 @@ function Index() {
           <div className="hero-stamp">05 DEZ<br /><span className="text-primary">14:00 H</span></div>
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
-            <h1 id="event-title" className="hero-title"><img src={cnaLogo.url} alt="CNA" width={1774} height={887} className="hero-logo" decoding="async" />FIFA<br /><span className="text-primary">COMPETITION</span></h1>
+            <h1 id="event-title" className="hero-title"><img src={cnaTrofeu.url} alt="CNA" width={1635} height={505} className="hero-logo" decoding="async" />FIFA<br /><span className="text-primary">COMPETITION</span></h1>
             <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao <span className="text-info">próximo&nbsp;nível</span>.</p>
             <div className="hero-actions">
               <Button variant="arena" className="h-13 px-7 text-base" onClick={openRegistration}>Quero entrar em campo <ArrowUpRight size={19} /></Button>

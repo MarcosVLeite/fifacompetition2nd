@@ -53,7 +53,7 @@
 .site-wrap { max-width: 1320px; margin-inline: auto; padding-inline: 64px; }
 .site-header { height: 96px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
 .event-wordmark { font-family: var(--font-display); font-size: 17px; line-height: 1.15; }
-.brand-icon { display: grid; place-items: center; height: 42px; width: 42px; background: var(--primary); color: var(--primary-foreground); transform: rotate(-7deg); border-radius: 4px; }
+.brand-logo { height: 30px; width: auto; }
 .eyebrow { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
 .text-info { font-weight: 600; }
 .hero { position: relative; min-height: 690px; isolation: isolate; overflow: hidden; }
