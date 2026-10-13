@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Trophy, Users, Ticket, Check, Loader2 } from "lucide-react";
+import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Users, Ticket, Check, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -136,7 +136,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="site-wrap site-footer"><div className="flex items-center gap-2"><Trophy size={17} className="text-primary" /><span className="font-semibold text-foreground">CNA FIFA COMPETITION</span><span className="mx-2">/</span> CNA Itapecerica da Serra</div><span>Futebol no controle. Conexão fora dele.</span></footer>
+      <footer className="site-wrap site-footer"><div className="flex items-center gap-2"><img src={cnaTrofeu.url} alt="CNA" className="footer-logo" decoding="async" /><span className="font-semibold text-foreground">CNA FIFA COMPETITION</span><span className="mx-2">/</span> CNA Itapecerica da Serra</div><span>Futebol no controle. Conexão fora dele.</span></footer>
 
       <Dialog open={registrationOpen} onOpenChange={setRegistrationOpen}>
         <DialogContent className="w-[calc(100%-32px)] max-w-md rounded-md">
