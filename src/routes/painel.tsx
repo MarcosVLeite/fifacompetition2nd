@@ -151,7 +151,7 @@ function formatDateTime(iso: string): string {
 }
 
 function buildCsv(rows: TeamRegistrationRow[]): string {
-  const header = ["Data da inscrição", "Jogador 1", "Jogador 2", "Telefone", "Alunos do CNA"];
+  const header = ["Data da inscrição", "Jogador 1", "Jogador 2", "Telefone", "Alunos do CNA", "Status"];
   const lines = rows.map((r) =>
     [
       formatDateTime(r.createdAt),
@@ -159,6 +159,7 @@ function buildCsv(rows: TeamRegistrationRow[]): string {
       r.player2Name,
       r.phone,
       r.isCnaStudent ? "Sim" : "Não",
+      r.isBlocked ? `Bloqueada: ${r.blockReason ?? ""}` : "Ativa",
     ]
       .map(csvEscape)
       .join(";"),
