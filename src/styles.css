@@ -29,17 +29,17 @@
   --radius-lg: 6px;
 }
 :root {
-  --background: oklch(0.19 0.011 153);
+  --background: oklch(0.19 0.011 25);
   --foreground: oklch(1 0 0);
-  --card: oklch(0.225 0.012 153);
-  --primary: oklch(0.911 0.247 128);
-  --primary-foreground: oklch(0.19 0.011 153);
-  --secondary: oklch(0.271 0.019 151);
-  --muted-foreground: oklch(0.699 0.009 151);
-  --border: oklch(0.34 0.013 151);
+  --card: oklch(0.225 0.012 25);
+  --primary: oklch(0.62 0.24 25);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.271 0.019 25);
+  --muted-foreground: oklch(0.699 0.009 25);
+  --border: oklch(0.34 0.013 25);
   --destructive: oklch(0.65 0.21 25);
-  --hero-shade: linear-gradient(90deg, oklch(0.15 0.012 153 / 96%) 0%, oklch(0.15 0.012 153 / 72%) 34%, oklch(0.15 0.012 153 / 8%) 70%), linear-gradient(0deg, var(--background), transparent 33%);
-  --overlay: oklch(0.1 0.01 153 / 85%);
+  --hero-shade: linear-gradient(90deg, oklch(0.15 0.012 25 / 96%) 0%, oklch(0.15 0.012 25 / 72%) 34%, oklch(0.15 0.012 25 / 8%) 70%), linear-gradient(0deg, var(--background), transparent 33%);
+  --overlay: oklch(0.1 0.01 25 / 85%);
 }
 @layer base {
   * { border-color: var(--border); }
@@ -64,7 +64,7 @@
 .hero-copy { max-width: 400px; font-size: 18px; line-height: 1.55; color: var(--muted-foreground); }
 .hero-actions { display: flex; gap: 24px; align-items: center; margin-top: 29px; }
 .hero-footnote { display: flex; align-items: center; gap: 8px; margin-top: 19px; font-size: 13px; color: var(--muted-foreground); }
-.hero-stamp { position: absolute; right: max(64px, calc((100vw - 1192px)/2)); top: 48px; border-left: 2px solid var(--primary); padding-left: 14px; font-family: var(--font-display); font-size: 15px; line-height: 1.5; }
+.hero-stamp { position: absolute; right: max(64px, calc((100vw - 1192px)/2)); top: 48px; border-left: 2px solid var(--primary); padding-left: 14px; font-family: var(--font-display); font-size: 15px; line-height: 1.5; text-shadow: 0 1px 10px rgb(0 0 0 / 65%); }
 .event-strip { display: grid; grid-template-columns: 1fr 1fr 1.4fr 1fr; border-block: 1px solid var(--border); padding-block: 30px; }
 .event-fact { padding-inline: 28px; border-right: 1px solid var(--border); display: flex; gap: 15px; align-items: center; }
 .event-fact:first-child { padding-left: 0; }
