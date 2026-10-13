@@ -187,6 +187,24 @@ function Painel() {
   const detect = useServerFn(detectAndBlockDuplicates);
   const [checking, setChecking] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
+  const [search, setSearch] = useState("");
+
+  const total = registrations.length;
+  const blocked = registrations.filter((r) => r.isBlocked).length;
+  const active = total - blocked;
+  const cnaStudents = registrations.filter((r) => r.isCnaStudent).length;
+  const cnaPercent = total === 0 ? 0 : Math.round((cnaStudents / total) * 100);
+  const estimatedRevenue = active * 20;
+
+  const normalizedSearch = search.trim().toLowerCase();
+  const filtered = normalizedSearch
+    ? registrations.filter((r) =>
+        [r.player1Name, r.player2Name, r.phone]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedSearch),
+      )
+    : registrations;
 
   async function handleLock() {
     await lock();
