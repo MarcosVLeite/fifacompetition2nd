@@ -83,3 +83,50 @@ export const getTeamRegistrations = createServerFn({ method: "GET" }).handler(
     };
   },
 );
+
+const uuidRe = /^[0-9a-f-]{36}$/i;
+
+function validateUpdate(input: unknown) {
+  const d = input as Record<string, unknown>;
+  const id = String(d?.id ?? "");
+  const player1Name = String(d?.player1Name ?? "").trim();
+  const player2Name = String(d?.player2Name ?? "").trim();
+  const phone = String(d?.phone ?? "").trim();
+  if (!uuidRe.test(id)) throw new Error("Inscrição inválida.");
+  if (player1Name.length < 3 || player1Name.length > 100) throw new Error("Nome do jogador 1 inválido.");
+  if (player2Name.length < 3 || player2Name.length > 100) throw new Error("Nome do jogador 2 inválido.");
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 10 || digits.length > 13) throw new Error("Telefone inválido (inclua o DDD).");
+  return { id, player1Name, player2Name, phone, isCnaStudent: d?.isCnaStudent === true };
+}
+
+export const updateTeamRegistration = createServerFn({ method: "POST" })
+  .inputValidator(validateUpdate)
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("team_registrations")
+      .update({
+        player1_name: data.player1Name,
+        player2_name: data.player2Name,
+        phone: data.phone,
+        is_cna_student: data.isCnaStudent,
+      })
+      .eq("id", data.id);
+    if (error) throw new Error("Não foi possível salvar as alterações.");
+    return { ok: true as const };
+  });
+
+export const deleteTeamRegistration = createServerFn({ method: "POST" })
+  .inputValidator((input: { id: string }) => {
+    if (!uuidRe.test(String(input?.id ?? ""))) throw new Error("Inscrição inválida.");
+    return { id: input.id };
+  })
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("team_registrations").delete().eq("id", data.id);
+    if (error) throw new Error("Não foi possível apagar a inscrição.");
+    return { ok: true as const };
+  });
