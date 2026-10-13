@@ -187,6 +187,24 @@ function Painel() {
   const detect = useServerFn(detectAndBlockDuplicates);
   const [checking, setChecking] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
+  const [search, setSearch] = useState("");
+
+  const total = registrations.length;
+  const blocked = registrations.filter((r) => r.isBlocked).length;
+  const active = total - blocked;
+  const cnaStudents = registrations.filter((r) => r.isCnaStudent).length;
+  const cnaPercent = total === 0 ? 0 : Math.round((cnaStudents / total) * 100);
+  const estimatedRevenue = active * 20;
+
+  const normalizedSearch = search.trim().toLowerCase();
+  const filtered = normalizedSearch
+    ? registrations.filter((r) =>
+        [r.player1Name, r.player2Name, r.phone]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalizedSearch),
+      )
+    : registrations;
 
   async function handleLock() {
     await lock();
@@ -252,6 +270,49 @@ function Painel() {
           <p className={`mt-4 text-sm ${notice.ok ? "text-foreground" : "text-destructive"}`}>
             {notice.text}
           </p>
+        )}
+
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Total de duplas</p>
+            <p className="mt-1 font-display text-2xl text-foreground">{total}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Ativas / Bloqueadas</p>
+            <p className="mt-1 font-display text-2xl text-foreground">
+              {active} <span className="text-base text-muted-foreground">/</span>{" "}
+              <span className={blocked > 0 ? "text-destructive" : ""}>{blocked}</span>
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Alunos do CNA</p>
+            <p className="mt-1 font-display text-2xl text-foreground">
+              {cnaPercent}%{" "}
+              <span className="text-base text-muted-foreground">
+                ({cnaStudents} de {total})
+              </span>
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Arrecadação estimada</p>
+            <p className="mt-1 font-display text-2xl text-foreground">
+              R$ {estimatedRevenue}
+              <span className="text-base text-muted-foreground"> ({active} × R$ 20)</span>
+            </p>
+          </div>
+        </div>
+
+        {registrations.length > 0 && (
+          <div className="mt-6">
+            <input
+              type="search"
+              aria-label="Buscar dupla por nome ou telefone"
+              placeholder="Buscar por nome ou telefone…"
+              className="w-full max-w-sm rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         )}
 
         {registrations.length === 0 ? (
