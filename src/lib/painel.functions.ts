@@ -88,16 +88,16 @@ const uuidRe = /^[0-9a-f-]{36}$/i;
 
 function validateUpdate(input: unknown) {
   const d = input as Record<string, unknown>;
-  const id = String(d?.id ?? "");
-  const player1Name = String(d?.player1Name ?? "").trim();
-  const player2Name = String(d?.player2Name ?? "").trim();
-  const phone = String(d?.phone ?? "").trim();
+  const id = String(d?.["id"] ?? "");
+  const player1Name = String(d?.["player1Name"] ?? "").trim();
+  const player2Name = String(d?.["player2Name"] ?? "").trim();
+  const phone = String(d?.["phone"] ?? "").trim();
   if (!uuidRe.test(id)) throw new Error("Inscrição inválida.");
   if (player1Name.length < 3 || player1Name.length > 100) throw new Error("Nome do jogador 1 inválido.");
   if (player2Name.length < 3 || player2Name.length > 100) throw new Error("Nome do jogador 2 inválido.");
   const digits = phone.replace(/\D/g, "");
   if (digits.length < 10 || digits.length > 13) throw new Error("Telefone inválido (inclua o DDD).");
-  return { id, player1Name, player2Name, phone, isCnaStudent: d?.isCnaStudent === true };
+  return { id, player1Name, player2Name, phone, isCnaStudent: d?.["isCnaStudent"] === true };
 }
 
 export const updateTeamRegistration = createServerFn({ method: "POST" })
