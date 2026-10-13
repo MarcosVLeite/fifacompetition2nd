@@ -3,8 +3,10 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   deleteTeamRegistration,
+  detectAndBlockDuplicates,
   getTeamRegistrations,
   lockPainel,
+  unblockTeamRegistration,
   updateTeamRegistration,
   type TeamRegistrationRow,
 } from "@/lib/painel.functions";
@@ -17,6 +19,7 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
   const router = useRouter();
   const update = useServerFn(updateTeamRegistration);
   const remove = useServerFn(deleteTeamRegistration);
+  const unblock = useServerFn(unblockTeamRegistration);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +79,19 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
         </>
       ) : (
         <>
-          <td className="px-4 py-3 font-medium text-foreground">{row.player1Name}</td>
+          <td className="px-4 py-3 font-medium text-foreground">
+            {row.player1Name}
+            {row.isBlocked && (
+              <div className="mt-2 max-w-xs rounded-md border border-destructive/50 bg-destructive/10 p-2 text-xs font-normal text-foreground">
+                <span className="font-semibold text-destructive">BLOQUEADA · </span>
+                {row.blockReason}
+                <button className="ml-1 underline text-muted-foreground" disabled={busy}
+                  onClick={() => run(() => unblock({ data: { id: row.id } }))}>
+                  Desbloquear
+                </button>
+              </div>
+            )}
+          </td>
           <td className="px-4 py-3 font-medium text-foreground">{row.player2Name}</td>
           <td className="whitespace-nowrap px-4 py-3 text-foreground">{row.phone}</td>
           <td className="px-4 py-3 text-foreground">{row.isCnaStudent ? "Sim" : "Não"}</td>
@@ -168,10 +183,35 @@ function Painel() {
   const { registrations } = Route.useLoaderData();
   const router = useRouter();
   const lock = useServerFn(lockPainel);
+  const detect = useServerFn(detectAndBlockDuplicates);
+  const [checking, setChecking] = useState(false);
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
 
   async function handleLock() {
     await lock();
     await router.navigate({ to: "/entrar" });
+  }
+
+  async function handleDetect() {
+    setChecking(true);
+    setNotice(null);
+    try {
+      const res = await detect();
+      if (!res.ok) setNotice({ ok: false, text: res.error });
+      else {
+        setNotice({
+          ok: true,
+          text: res.blocked === 0
+            ? "Nenhuma inscrição duplicada encontrada."
+            : `${res.blocked} ${res.blocked === 1 ? "inscrição bloqueada" : "inscrições bloqueadas"} como possível duplicata.`,
+        });
+        await router.invalidate();
+      }
+    } catch {
+      setNotice({ ok: false, text: "A análise por IA falhou. Tente novamente." });
+    } finally {
+      setChecking(false);
+    }
   }
 
   return (
@@ -187,7 +227,14 @@ function Painel() {
               {registrations.length === 1 ? "dupla inscrita" : "duplas inscritas"}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="arenaOutline"
+              onClick={handleDetect}
+              disabled={checking || registrations.length < 2}
+            >
+              {checking ? "Analisando…" : "Verificar duplicadas (IA)"}
+            </Button>
             <Button
               variant="arena"
               onClick={() => downloadCsv(registrations)}
@@ -200,6 +247,11 @@ function Painel() {
             </Button>
           </div>
         </div>
+        {notice && (
+          <p className={`mt-4 text-sm ${notice.ok ? "text-foreground" : "text-destructive"}`}>
+            {notice.text}
+          </p>
+        )}
 
         {registrations.length === 0 ? (
           <p className="mt-10 rounded-xl border border-border bg-card p-8 text-center text-muted-foreground">
