@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Trophy, Users, Ticket, Check } from "lucide-react";
+import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Trophy, Users, Ticket, Check, Loader2 } from "lucide-react";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 import arenaImage from "@/assets/fifa-arena.jpg";
 
 const description = "Monte sua dupla para o 2nd FIFA Competition no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
@@ -18,15 +22,54 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const registrationSchema = z.object({
+  player1: z.string().trim().min(3, "Informe o nome completo do jogador 1").max(100, "Nome muito longo"),
+  player2: z.string().trim().min(3, "Informe o nome completo do jogador 2").max(100, "Nome muito longo"),
+  phone: z.string().trim().regex(/^[\d\s()+-]{8,20}$/, "Informe um telefone válido com DDD"),
+  isCnaStudent: z.enum(["sim", "nao"], { message: "Selecione uma opção" }),
+});
+
+type RegistrationForm = { player1: string; player2: string; phone: string; isCnaStudent: "" | "sim" | "nao" };
+const emptyForm: RegistrationForm = { player1: "", player2: "", phone: "", isCnaStudent: "" };
+
 function Index() {
   const [registrationOpen, setRegistrationOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const openRegistration = () => setRegistrationOpen(true);
+  const [form, setForm] = useState<RegistrationForm>(emptyForm);
+  const [errors, setErrors] = useState<Partial<Record<keyof RegistrationForm, string>>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const openRegistration = () => { setRegistrationOpen(true); setSubmitted(false); setSubmitError(""); };
   const viewEvent = () => document.getElementById("campeonato")?.scrollIntoView({ behavior: "smooth" });
-  const copyDetails = async () => {
-    const text = "2nd FIFA Competition\n05 de dezembro, às 14h (2:00 p.m.)\nCNA Itapecerica da Serra\nCampeonato em duplas · R$ 20 por dupla";
-    try { await navigator.clipboard.writeText(text); setCopied(true); } catch { setCopied(false); }
+  const setField = (field: keyof RegistrationForm, value: string) => {
+    setForm((f) => ({ ...f, [field]: value }));
+    setErrors((e) => ({ ...e, [field]: undefined }));
   };
+
+  const submitRegistration = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSubmitError("");
+    const parsed = registrationSchema.safeParse(form);
+    if (!parsed.success) {
+      const fieldErrors: Partial<Record<keyof RegistrationForm, string>> = {};
+      for (const issue of parsed.error.issues) fieldErrors[issue.path[0] as keyof RegistrationForm] = issue.message;
+      setErrors(fieldErrors);
+      return;
+    }
+    setSubmitting(true);
+    const { error } = await supabase.from("team_registrations").insert({
+      player1_name: parsed.data.player1,
+      player2_name: parsed.data.player2,
+      phone: parsed.data.phone,
+      is_cna_student: parsed.data.isCnaStudent === "sim",
+    });
+    setSubmitting(false);
+    if (error) { setSubmitError("Não foi possível enviar sua inscrição. Tente novamente."); return; }
+    setSubmitted(true);
+    setForm(emptyForm);
+  };
+
   return (
     <>
       <header className="site-wrap site-header">
@@ -86,19 +129,61 @@ function Index() {
               ["Preciso participar em dupla?", "Sim! O campeonato será em duplas. Convide seu parceiro para participar com você."],
               ["Quanto custa a inscrição?", "A inscrição custa R$ 20 por dupla, e não por jogador."],
               ["Quando e onde vai acontecer?", "No dia 05 de dezembro, às 14h (2:00 p.m.), no CNA Itapecerica da Serra."],
-              ["Como faço para me inscrever?", "Procure a equipe do CNA Itapecerica da Serra para confirmar os detalhes e realizar a inscrição da sua dupla."],
+              ["Como faço para me inscrever?", "Clique em \"Quero participar\" e preencha o formulário com os dados da sua dupla."],
             ].map(([question, answer]) => <details className="faq-item" key={question}><summary>{question}<Plus /></summary><p>{answer}</p></details>)}
           </div></div>
         </section>
       </main>
 
       <footer className="site-wrap site-footer"><div className="flex items-center gap-2"><Trophy size={17} className="text-primary" /><span className="font-semibold text-foreground">2nd FIFA Competition</span><span className="mx-2">/</span> CNA Itapecerica da Serra</div><span>Futebol no controle. Conexão fora dele.</span></footer>
+
       <Dialog open={registrationOpen} onOpenChange={setRegistrationOpen}>
         <DialogContent className="w-[calc(100%-32px)] max-w-md rounded-md">
-          <div className="text-primary"><Users size={30} /></div>
-          <DialogHeader><DialogTitle className="font-display text-2xl leading-tight">ENTRE EM CAMPO<br />COM SUA DUPLA.</DialogTitle><DialogDescription className="pt-3 text-base">Para se inscrever, fale com a equipe do CNA Itapecerica da Serra e confirme a participação dos dois jogadores.</DialogDescription></DialogHeader>
-          <div className="space-y-3 border-y border-border py-5 text-sm"><p className="flex items-center gap-3"><CalendarDays size={17} className="text-primary" />05 de dezembro · 14h (2:00 p.m.)</p><p className="flex items-center gap-3"><MapPin size={17} className="text-primary" />CNA Itapecerica da Serra</p><p className="flex items-center gap-3"><Ticket size={17} className="text-primary" /><strong>R$ 20 por dupla</strong></p></div>
-          <Button variant="arena" className="h-12" onClick={copyDetails}>{copied ? <><Check /> Informações copiadas</> : <>Copiar informações do evento <ArrowUpRight /></>}</Button>
+          {submitted ? (
+            <div className="py-6 text-center">
+              <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground"><Check size={28} /></div>
+              <DialogHeader><DialogTitle className="font-display text-2xl leading-tight">INSCRIÇÃO ENVIADA!</DialogTitle><DialogDescription className="pt-3 text-base">Sua dupla está na lista. Nos vemos no dia 05 de dezembro, às 14h, no CNA Itapecerica da Serra.</DialogDescription></DialogHeader>
+              <Button variant="arena" className="mt-6 h-12 w-full" onClick={() => setRegistrationOpen(false)}>Fechar</Button>
+            </div>
+          ) : (
+            <>
+              <div className="text-primary"><Users size={30} /></div>
+              <DialogHeader><DialogTitle className="font-display text-2xl leading-tight">INSCREVA SUA DUPLA.</DialogTitle><DialogDescription className="pt-2 text-base">Preencha os dados abaixo para garantir a vaga da sua dupla. Inscrição: R$ 20 por dupla.</DialogDescription></DialogHeader>
+              <form onSubmit={submitRegistration} className="space-y-4 pt-2" noValidate>
+                <div className="space-y-1.5">
+                  <Label htmlFor="player1">Nome completo — Jogador 1</Label>
+                  <Input id="player1" value={form.player1} onChange={(e) => setField("player1", e.target.value)} maxLength={100} autoComplete="name" />
+                  {errors.player1 && <p className="text-sm text-destructive">{errors.player1}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="player2">Nome completo — Jogador 2</Label>
+                  <Input id="player2" value={form.player2} onChange={(e) => setField("player2", e.target.value)} maxLength={100} autoComplete="off" />
+                  {errors.player2 && <p className="text-sm text-destructive">{errors.player2}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone">Telefone com DDD</Label>
+                  <Input id="phone" type="tel" value={form.phone} onChange={(e) => setField("phone", e.target.value)} maxLength={20} placeholder="(11) 99999-9999" autoComplete="tel" />
+                  {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
+                </div>
+                <fieldset className="space-y-1.5">
+                  <legend className="text-sm font-medium">Vocês são alunos do CNA?</legend>
+                  <div className="flex gap-3 pt-1">
+                    {(["sim", "nao"] as const).map((option) => (
+                      <label key={option} className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2.5 text-sm font-medium transition-colors ${form.isCnaStudent === option ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>
+                        <input type="radio" name="isCnaStudent" value={option} checked={form.isCnaStudent === option} onChange={() => setField("isCnaStudent", option)} className="sr-only" />
+                        {option === "sim" ? "Sim" : "Não"}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.isCnaStudent && <p className="text-sm text-destructive">{errors.isCnaStudent}</p>}
+                </fieldset>
+                {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+                <Button variant="arena" type="submit" className="h-12 w-full" disabled={submitting}>
+                  {submitting ? <><Loader2 className="animate-spin" /> Enviando...</> : <>Confirmar inscrição <ArrowUpRight /></>}
+                </Button>
+              </form>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>
