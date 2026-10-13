@@ -8,6 +8,7 @@ export const Route = createFileRoute("/painel")({
   head: () => ({
     meta: [
       { title: "Duplas inscritas | CNA FIFA COMPETITION" },
+      { name: "description", content: "Lista de duplas inscritas no campeonato (acesso restrito)." },
       { name: "robots", content: "noindex" },
     ],
   }),

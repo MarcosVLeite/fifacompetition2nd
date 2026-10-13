@@ -8,6 +8,7 @@ export const Route = createFileRoute("/entrar")({
   head: () => ({
     meta: [
       { title: "Acesso do organizador | CNA FIFA COMPETITION" },
+      { name: "description", content: "Área restrita do organizador do campeonato." },
       { name: "robots", content: "noindex" },
     ],
   }),
