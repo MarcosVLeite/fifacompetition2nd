@@ -1,4 +1,5 @@
 # Projeto feito pelo Lovable para um campeonato de videogame que será realizado na escola onde trabalho.
+Projeto em No-Code Development
 
 
 
