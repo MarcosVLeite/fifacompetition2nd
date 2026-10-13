@@ -272,6 +272,49 @@ function Painel() {
           </p>
         )}
 
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Total de duplas</p>
+            <p className="mt-1 font-display text-2xl text-foreground">{total}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Ativas / Bloqueadas</p>
+            <p className="mt-1 font-display text-2xl text-foreground">
+              {active} <span className="text-base text-muted-foreground">/</span>{" "}
+              <span className={blocked > 0 ? "text-destructive" : ""}>{blocked}</span>
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Alunos do CNA</p>
+            <p className="mt-1 font-display text-2xl text-foreground">
+              {cnaPercent}%{" "}
+              <span className="text-base text-muted-foreground">
+                ({cnaStudents} de {total})
+              </span>
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4">
+            <p className="text-xs text-muted-foreground">Arrecadação estimada</p>
+            <p className="mt-1 font-display text-2xl text-foreground">
+              R$ {estimatedRevenue}
+              <span className="text-base text-muted-foreground"> ({active} × R$ 20)</span>
+            </p>
+          </div>
+        </div>
+
+        {registrations.length > 0 && (
+          <div className="mt-6">
+            <input
+              type="search"
+              aria-label="Buscar dupla por nome ou telefone"
+              placeholder="Buscar por nome ou telefone…"
+              className="w-full max-w-sm rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        )}
+
         {registrations.length === 0 ? (
           <p className="mt-10 rounded-xl border border-border bg-card p-8 text-center text-muted-foreground">
             Nenhuma dupla inscrita ainda. As inscrições enviadas no site aparecem aqui.
