@@ -1,3 +1,10 @@
+#Projeto feito pelo Lovable para um campeonato de videgoame que será realizado na escola onde trabalho.
+
+
+
+
+
+
 # Fifacompetition2nd
 
 Construa uma landing page para um evento que é um Campeonato do Jogo de futebol FIFA
