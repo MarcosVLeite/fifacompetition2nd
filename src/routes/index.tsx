@@ -76,7 +76,7 @@ function Index() {
       <header className="site-wrap site-header">
         <div className="flex items-center gap-3" aria-label="CNA FIFA COMPETITION">
           <img src={cnaTrofeu.url} alt="CNA" width={1635} height={505} className="brand-logo" decoding="async" />
-          <span className="event-wordmark">CNA FIFA<br /><span className="text-muted-foreground">COMPETITION</span></span>
+          <span className="event-wordmark"><span className="wm-cna">CNA </span>FIFA<br /><span className="text-muted-foreground">COMPETITION</span></span>
         </div>
         <div className="header-place flex items-center gap-2 text-sm text-muted-foreground"><MapPin size={15} /> CNA Itapecerica da Serra</div>
         <Button variant="arenaOutline" onClick={openRegistration} className="h-10 px-5">Quero participar <ArrowUpRight /></Button>
