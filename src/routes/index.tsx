@@ -89,7 +89,7 @@ function Index() {
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
             <h1 id="event-title" className="hero-title"><img src={cnaLogo.url} alt="CNA" width={1774} height={887} className="hero-logo" decoding="async" />FIFA<br /><span className="text-primary">COMPETITION</span></h1>
-            <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao <span className="text-info">próximo nível</span>.</p>
+            <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao <span className="text-info">próximo&nbsp;nível</span>.</p>
             <div className="hero-actions">
               <Button variant="arena" className="h-13 px-7 text-base" onClick={openRegistration}>Quero entrar em campo <ArrowUpRight size={19} /></Button>
               <Button variant="ghost" className="h-13 px-0 text-sm" onClick={viewEvent}>Conheça o campeonato <ArrowDown /></Button>
