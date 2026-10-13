@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import arenaImage from "@/assets/fifa-arena.jpg";
+import heroAsset from "@/assets/monstros-futebol.png.asset.json";
 
 const description = "Monte sua dupla para o 2nd FIFA Competition no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
 export const Route = createFileRoute("/")({
@@ -83,7 +83,7 @@ function Index() {
 
       <main>
         <section className="hero" aria-labelledby="event-title">
-          <img src={arenaImage} alt="Bola de futebol no gramado de um estádio iluminado à noite" width={1536} height={1024} className="hero-image" fetchPriority="high" />
+          <img src={heroAsset.url} alt="Monstros jogando videogame em uma sala iluminada por luzes neon" width={1672} height={941} className="hero-image" fetchPriority="high" />
           <div className="hero-stamp">05 DEZ<br /><span className="text-primary">14:00 H</span></div>
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
