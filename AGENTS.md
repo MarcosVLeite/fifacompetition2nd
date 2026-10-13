@@ -12,3 +12,4 @@
 - Keep the event landing page as an editorial single-page experience at the index route; its content belongs to one event, not separate destinations.
 - Use global semantic design tokens and shared Button variants for all event styling and actions to keep the visual identity consistent.
 - Participation actions show confirmed event information until the organizer supplies an official registration destination; never simulate successful registrations.
+- The organizer panel (`/painel`, list + CSV export of `team_registrations`) is gated by the shared-password gate in `src/lib/painel.functions.ts`: password in the `SITE_PASSWORD` server-only secret, timing-safe comparison, encrypted `useSession` cookie (`SESSION_SECRET`); registration data is read with the service-role client only inside the gated server function, never with public policies.
