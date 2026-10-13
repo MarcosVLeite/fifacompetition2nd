@@ -24,6 +24,7 @@
   --color-input: var(--border);
   --color-ring: var(--primary);
   --color-destructive: var(--destructive);
+  --color-info: var(--info);
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 6px;
@@ -38,6 +39,7 @@
   --muted-foreground: oklch(0.699 0.009 25);
   --border: oklch(0.34 0.013 25);
   --destructive: oklch(0.65 0.21 25);
+  --info: oklch(0.78 0.13 232);
   --hero-shade: linear-gradient(90deg, oklch(0.15 0.012 25 / 96%) 0%, oklch(0.15 0.012 25 / 72%) 34%, oklch(0.15 0.012 25 / 8%) 70%), linear-gradient(0deg, var(--background), transparent 33%);
   --overlay: oklch(0.1 0.01 25 / 85%);
 }
@@ -53,12 +55,13 @@
 .event-wordmark { font-family: var(--font-display); font-size: 17px; line-height: 1.15; }
 .brand-icon { display: grid; place-items: center; height: 42px; width: 42px; background: var(--primary); color: var(--primary-foreground); transform: rotate(-7deg); border-radius: 4px; }
 .eyebrow { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+.text-info { font-weight: 600; }
 .hero { position: relative; min-height: 690px; isolation: isolate; overflow: hidden; }
 .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 63%; z-index: -2; }
 .hero::after { content: ''; position: absolute; inset: 0; background: var(--hero-shade); z-index: -1; }
 .hero-content { padding-top: 68px; padding-bottom: 70px; }
-.hero-kicker { display: flex; align-items: center; gap: 10px; color: var(--primary); }
-.hero-kicker::before { content:''; width: 7px; height: 7px; background: var(--primary); }
+.hero-kicker { display: flex; align-items: center; gap: 10px; color: var(--info); }
+.hero-kicker::before { content:''; width: 7px; height: 7px; background: var(--info); }
 .hero-title { font-size: 86px; line-height: 1.04; margin: 27px 0 22px; max-width: 810px; }
 .hero-logo { display: block; height: 58px; width: auto; margin-bottom: 12px; }
 .hero-copy { max-width: 400px; font-size: 18px; line-height: 1.55; color: var(--muted-foreground); }
