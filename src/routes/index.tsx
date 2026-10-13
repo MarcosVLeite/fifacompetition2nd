@@ -130,6 +130,8 @@ function Index() {
               ["Preciso participar em dupla?", "Sim! O campeonato será em duplas. Convide seu parceiro para participar com você."],
               ["Quanto custa a inscrição?", "A inscrição custa R$ 20 por dupla, e não por jogador."],
               ["Quando e onde vai acontecer?", "No dia 05 de dezembro, às 14h (2:00 p.m.), no CNA Itapecerica da Serra."],
+              ["Em qual plataforma será jogado?", "As partidas serão disputadas no PlayStation."],
+              ["Quanto tempo dura cada partida?", "Cada partida terá 6 minutos."],
               ["Como faço para me inscrever?", "Clique em \"Quero participar\" e preencha o formulário com os dados da sua dupla."],
             ].map(([question, answer]) => <details className="faq-item" key={question}><summary>{question}<Plus /></summary><p>{answer}</p></details>)}
           </div></div>
