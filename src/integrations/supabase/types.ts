@@ -14,7 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      team_registrations: {
+        Row: {
+          created_at: string
+          id: string
+          is_cna_student: boolean
+          phone: string
+          player1_name: string
+          player2_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_cna_student: boolean
+          phone: string
+          player1_name: string
+          player2_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_cna_student?: boolean
+          phone?: string
+          player1_name?: string
+          player2_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
