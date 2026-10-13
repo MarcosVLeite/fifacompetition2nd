@@ -1,7 +1,116 @@
+import { useState } from "react";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { getTeamRegistrations, lockPainel, type TeamRegistrationRow } from "@/lib/painel.functions";
+import {
+  deleteTeamRegistration,
+  getTeamRegistrations,
+  lockPainel,
+  updateTeamRegistration,
+  type TeamRegistrationRow,
+} from "@/lib/painel.functions";
 import { Button } from "@/components/ui/button";
+
+const inputCls =
+  "w-full min-w-28 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
+
+function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
+  const router = useRouter();
+  const update = useServerFn(updateTeamRegistration);
+  const remove = useServerFn(deleteTeamRegistration);
+  const [editing, setEditing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    player1Name: row.player1Name,
+    player2Name: row.player2Name,
+    phone: row.phone,
+    isCnaStudent: row.isCnaStudent,
+  });
+
+  async function run(fn: () => Promise<unknown>) {
+    setBusy(true);
+    setError(null);
+    try {
+      await fn();
+      setEditing(false);
+      await router.invalidate();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Algo deu errado.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleDelete() {
+    if (!window.confirm(`Apagar a inscrição de ${row.player1Name} e ${row.player2Name}?`)) return;
+    void run(() => remove({ data: { id: row.id } }));
+  }
+
+  return (
+    <tr className="border-b border-border/60 align-top last:border-0">
+      <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
+        {formatDateTime(row.createdAt)}
+      </td>
+      {editing ? (
+        <>
+          <td className="px-4 py-3">
+            <input aria-label="Jogador 1" className={inputCls} value={form.player1Name}
+              onChange={(e) => setForm({ ...form, player1Name: e.target.value })} />
+          </td>
+          <td className="px-4 py-3">
+            <input aria-label="Jogador 2" className={inputCls} value={form.player2Name}
+              onChange={(e) => setForm({ ...form, player2Name: e.target.value })} />
+          </td>
+          <td className="px-4 py-3">
+            <input aria-label="Telefone" className={inputCls} value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+          </td>
+          <td className="px-4 py-3">
+            <select aria-label="Alunos do CNA" className={inputCls}
+              value={form.isCnaStudent ? "sim" : "nao"}
+              onChange={(e) => setForm({ ...form, isCnaStudent: e.target.value === "sim" })}>
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
+          </td>
+        </>
+      ) : (
+        <>
+          <td className="px-4 py-3 font-medium text-foreground">{row.player1Name}</td>
+          <td className="px-4 py-3 font-medium text-foreground">{row.player2Name}</td>
+          <td className="whitespace-nowrap px-4 py-3 text-foreground">{row.phone}</td>
+          <td className="px-4 py-3 text-foreground">{row.isCnaStudent ? "Sim" : "Não"}</td>
+        </>
+      )}
+      <td className="px-4 py-3">
+        <div className="flex gap-2">
+          {editing ? (
+            <>
+              <Button size="sm" variant="arena" disabled={busy}
+                onClick={() => run(() => update({ data: { id: row.id, ...form } }))}>
+                Salvar
+              </Button>
+              <Button size="sm" variant="arenaOutline" disabled={busy}
+                onClick={() => { setEditing(false); setError(null); }}>
+                Cancelar
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button size="sm" variant="arenaOutline" disabled={busy} onClick={() => setEditing(true)}>
+                Editar
+              </Button>
+              <Button size="sm" variant="destructive" disabled={busy} onClick={handleDelete}>
+                Apagar
+              </Button>
+            </>
+          )}
+        </div>
+        {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+      </td>
+    </tr>
+  );
+}
 
 export const Route = createFileRoute("/painel")({
   loader: () => getTeamRegistrations(),
@@ -106,19 +215,12 @@ function Painel() {
                   <th className="px-4 py-3 font-medium">Jogador 2</th>
                   <th className="px-4 py-3 font-medium">Telefone</th>
                   <th className="px-4 py-3 font-medium">Alunos do CNA</th>
+                  <th className="px-4 py-3 font-medium">Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {registrations.map((r) => (
-                  <tr key={r.id} className="border-b border-border/60 last:border-0">
-                    <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
-                      {formatDateTime(r.createdAt)}
-                    </td>
-                    <td className="px-4 py-3 font-medium text-foreground">{r.player1Name}</td>
-                    <td className="px-4 py-3 font-medium text-foreground">{r.player2Name}</td>
-                    <td className="whitespace-nowrap px-4 py-3 text-foreground">{r.phone}</td>
-                    <td className="px-4 py-3 text-foreground">{r.isCnaStudent ? "Sim" : "Não"}</td>
-                  </tr>
+                  <RegistrationRow key={r.id} row={r} />
                 ))}
               </tbody>
             </table>
