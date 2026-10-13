@@ -16,24 +16,30 @@ export type Database = {
     Tables: {
       team_registrations: {
         Row: {
+          block_reason: string | null
           created_at: string
           id: string
+          is_blocked: boolean
           is_cna_student: boolean
           phone: string
           player1_name: string
           player2_name: string
         }
         Insert: {
+          block_reason?: string | null
           created_at?: string
           id?: string
+          is_blocked?: boolean
           is_cna_student: boolean
           phone: string
           player1_name: string
           player2_name: string
         }
         Update: {
+          block_reason?: string | null
           created_at?: string
           id?: string
+          is_blocked?: boolean
           is_cna_student?: boolean
           phone?: string
           player1_name?: string

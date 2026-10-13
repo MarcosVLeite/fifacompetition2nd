@@ -1,0 +1,1 @@
+ALTER TABLE public.team_registrations ADD COLUMN is_blocked boolean NOT NULL DEFAULT false, ADD COLUMN block_reason text;

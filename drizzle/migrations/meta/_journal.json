@@ -8,6 +8,13 @@
       "when": 1791902445637,
       "tag": "0000_create_team_registrations",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791905916196,
+      "tag": "0001_add_registration_block",
+      "breakpoints": true
     }
   ]
 }

@@ -55,6 +55,27 @@ export interface TeamRegistrationRow {
   player2Name: string;
   phone: string;
   isCnaStudent: boolean;
+  isBlocked: boolean;
+  blockReason: string | null;
+}
+
+async function loadRegistrations(): Promise<TeamRegistrationRow[]> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("team_registrations")
+    .select("id, created_at, player1_name, player2_name, phone, is_cna_student, is_blocked, block_reason")
+    .order("created_at", { ascending: true });
+  if (error) throw new Error("Não foi possível carregar as inscrições.");
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    createdAt: row.created_at,
+    player1Name: row.player1_name,
+    player2Name: row.player2_name,
+    phone: row.phone,
+    isCnaStudent: row.is_cna_student,
+    isBlocked: row.is_blocked,
+    blockReason: row.block_reason,
+  }));
 }
 
 // Protected DATA lives behind the server boundary: gated here, returned only
@@ -62,27 +83,54 @@ export interface TeamRegistrationRow {
 export const getTeamRegistrations = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ registrations: TeamRegistrationRow[] }> => {
     await requireUnlocked();
-
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
-      .from("team_registrations")
-      .select("id, created_at, player1_name, player2_name, phone, is_cna_student")
-      .order("created_at", { ascending: true });
-
-    if (error) throw new Error("Não foi possível carregar as inscrições.");
-
-    return {
-      registrations: (data ?? []).map((row) => ({
-        id: row.id,
-        createdAt: row.created_at,
-        player1Name: row.player1_name,
-        player2Name: row.player2_name,
-        phone: row.phone,
-        isCnaStudent: row.is_cna_student,
-      })),
-    };
+    return { registrations: await loadRegistrations() };
   },
 );
+
+// AI duplicate check: analyzes non-blocked registrations and blocks each
+// likely duplicate (the newer entry) with the model's explanation.
+export const detectAndBlockDuplicates = createServerFn({ method: "POST" }).handler(
+  async (): Promise<{ ok: true; blocked: number } | { ok: false; error: string }> => {
+    await requireUnlocked();
+    const rows = (await loadRegistrations()).filter((r) => !r.isBlocked);
+    const { detectDuplicates, GatewayError } = await import("./duplicates.server");
+    let matches;
+    try {
+      matches = await detectDuplicates(rows);
+    } catch (e) {
+      if (e instanceof GatewayError) return { ok: false, error: e.message };
+      console.error(e);
+      return { ok: false, error: "A análise por IA falhou. Tente novamente." };
+    }
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    for (const m of matches) {
+      const orig = byId.get(m.originalId)!;
+      const reason = `Possível duplicata de ${orig.player1Name} & ${orig.player2Name}: ${m.explanation}`;
+      await supabaseAdmin
+        .from("team_registrations")
+        .update({ is_blocked: true, block_reason: reason.slice(0, 600) })
+        .eq("id", m.duplicateId);
+    }
+    return { ok: true, blocked: matches.length };
+  },
+);
+
+export const unblockTeamRegistration = createServerFn({ method: "POST" })
+  .inputValidator((input: { id: string }) => {
+    if (!/^[0-9a-f-]{36}$/i.test(String(input?.id ?? ""))) throw new Error("Inscrição inválida.");
+    return { id: input.id };
+  })
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("team_registrations")
+      .update({ is_blocked: false, block_reason: null })
+      .eq("id", data.id);
+    if (error) throw new Error("Não foi possível desbloquear.");
+    return { ok: true as const };
+  });
 
 const uuidRe = /^[0-9a-f-]{36}$/i;
 
