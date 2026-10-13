@@ -1,4 +1,4 @@
-#Projeto feito pelo Lovable para um campeonato de videgoame que será realizado na escola onde trabalho.
+# Projeto feito pelo Lovable para um campeonato de videgoame que será realizado na escola onde trabalho.
 
 
 
