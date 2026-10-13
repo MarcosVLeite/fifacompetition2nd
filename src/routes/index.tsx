@@ -9,12 +9,12 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";
 
-const description = "Monte sua dupla para o 2nd FIFA Competition no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
+const description = "Monte sua dupla para o CNA FIFA COMPETITION no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
-    { title: "2nd FIFA Competition — Entre em campo com sua dupla" },
+    { title: "CNA FIFA COMPETITION — Entre em campo com sua dupla" },
     { name: "description", content: description },
-    { property: "og:title", content: "2nd FIFA Competition | CNA Itapecerica da Serra" },
+    { property: "og:title", content: "CNA FIFA COMPETITION | CNA Itapecerica da Serra" },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
@@ -73,9 +73,9 @@ function Index() {
   return (
     <>
       <header className="site-wrap site-header">
-        <div className="flex items-center gap-3" aria-label="2nd FIFA Competition">
+        <div className="flex items-center gap-3" aria-label="CNA FIFA COMPETITION">
           <span className="brand-icon"><Trophy size={25} strokeWidth={2} /></span>
-          <span className="event-wordmark">FIFA<br /><span className="text-muted-foreground">COMPETITION</span></span>
+          <span className="event-wordmark">CNA FIFA<br /><span className="text-muted-foreground">COMPETITION</span></span>
         </div>
         <div className="header-place flex items-center gap-2 text-sm text-muted-foreground"><MapPin size={15} /> CNA Itapecerica da Serra</div>
         <Button variant="arenaOutline" onClick={openRegistration} className="h-10 px-5">Quero participar <ArrowUpRight /></Button>
@@ -87,7 +87,7 @@ function Index() {
           <div className="hero-stamp">05 DEZ<br /><span className="text-primary">14:00 H</span></div>
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
-            <h1 id="event-title" className="hero-title"><span className="edition">2nd</span>FIFA<br /><span className="text-primary">COMPETITION</span></h1>
+            <h1 id="event-title" className="hero-title"><span className="edition">CNA</span>FIFA<br /><span className="text-primary">COMPETITION</span></h1>
             <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao próximo nível.</p>
             <div className="hero-actions">
               <Button variant="arena" className="h-13 px-7 text-base" onClick={openRegistration}>Quero entrar em campo <ArrowUpRight size={19} /></Button>
@@ -108,7 +108,7 @@ function Index() {
           <section id="campeonato" className="section scroll-mt-6">
             <div className="section-label eyebrow"><span>01 /</span> O campeonato</div>
             <div className="editorial-grid">
-              <div><h2 className="section-title">DOIS JOGADORES.<br />UM SÓ <span className="text-primary">OBJETIVO.</span></h2><p className="section-copy mt-5 max-w-md">O futebol conecta. O FIFA coloca essa conexão em jogo. A segunda edição da FIFA Competition chega ao CNA Itapecerica da Serra para reunir quem ama uma boa disputa.</p><p className="section-copy mt-4 max-w-md">Aqui, ninguém entra em campo sozinho. Traga sua dupla e venha viver cada passe, cada defesa e cada gol.</p></div>
+              <div><h2 className="section-title">DOIS JOGADORES.<br />UM SÓ <span className="text-primary">OBJETIVO.</span></h2><p className="section-copy mt-5 max-w-md">O futebol conecta. O FIFA coloca essa conexão em jogo. A segunda edição da CNA FIFA Competition chega ao CNA Itapecerica da Serra para reunir quem ama uma boa disputa.</p><p className="section-copy mt-4 max-w-md">Aqui, ninguém entra em campo sozinho. Traga sua dupla e venha viver cada passe, cada defesa e cada gol.</p></div>
               <div>
                 <div className="format-row"><Users /><div><h3>Seu parceiro faz parte do jogo</h3><p>O campeonato é disputado em duplas. Escolha quem vai dividir o controle e a torcida com você.</p></div></div>
                 <div className="format-row"><Gamepad2 /><div><h3>Do controle para a competição</h3><p>Uma disputa presencial de FIFA, com toda a energia de jogar lado a lado.</p></div></div>
@@ -135,7 +135,7 @@ function Index() {
         </section>
       </main>
 
-      <footer className="site-wrap site-footer"><div className="flex items-center gap-2"><Trophy size={17} className="text-primary" /><span className="font-semibold text-foreground">2nd FIFA Competition</span><span className="mx-2">/</span> CNA Itapecerica da Serra</div><span>Futebol no controle. Conexão fora dele.</span></footer>
+      <footer className="site-wrap site-footer"><div className="flex items-center gap-2"><Trophy size={17} className="text-primary" /><span className="font-semibold text-foreground">CNA FIFA COMPETITION</span><span className="mx-2">/</span> CNA Itapecerica da Serra</div><span>Futebol no controle. Conexão fora dele.</span></footer>
 
       <Dialog open={registrationOpen} onOpenChange={setRegistrationOpen}>
         <DialogContent className="w-[calc(100%-32px)] max-w-md rounded-md">

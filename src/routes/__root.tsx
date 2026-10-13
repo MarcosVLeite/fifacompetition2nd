@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "2nd FIFA Competition | CNA Itapecerica da Serra" },
+      { title: "CNA FIFA COMPETITION | CNA Itapecerica da Serra" },
       { name: "description", content: "Campeonato FIFA em duplas no CNA Itapecerica da Serra. 05 de dezembro, às 14h." },
       
-      { property: "og:title", content: "2nd FIFA Competition" },
+      { property: "og:title", content: "CNA FIFA COMPETITION" },
       { property: "og:description", content: "Campeonato FIFA em duplas no CNA Itapecerica da Serra. 05 de dezembro, às 14h." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
