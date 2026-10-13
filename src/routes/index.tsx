@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";
+import cnaLogo from "@/assets/cna-logo.png.asset.json";
 
 const description = "Monte sua dupla para o CNA FIFA COMPETITION no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
 export const Route = createFileRoute("/")({
@@ -87,7 +88,7 @@ function Index() {
           <div className="hero-stamp">05 DEZ<br /><span className="text-primary">14:00 H</span></div>
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
-            <h1 id="event-title" className="hero-title"><span className="edition">CNA</span>FIFA<br /><span className="text-primary">COMPETITION</span></h1>
+            <h1 id="event-title" className="hero-title"><img src={cnaLogo.url} alt="CNA" width={1774} height={887} className="hero-logo" decoding="async" />FIFA<br /><span className="text-primary">COMPETITION</span></h1>
             <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao próximo nível.</p>
             <div className="hero-actions">
               <Button variant="arena" className="h-13 px-7 text-base" onClick={openRegistration}>Quero entrar em campo <ArrowUpRight size={19} /></Button>

@@ -60,7 +60,7 @@
 .hero-kicker { display: flex; align-items: center; gap: 10px; color: var(--primary); }
 .hero-kicker::before { content:''; width: 7px; height: 7px; background: var(--primary); }
 .hero-title { font-size: 86px; line-height: 1.04; margin: 27px 0 22px; max-width: 810px; }
-.hero-title .edition { font-size: 42px; display: block; line-height: 1.3; margin-bottom: 4px; }
+.hero-logo { display: block; height: 46px; width: auto; margin-bottom: 10px; }
 .hero-copy { max-width: 400px; font-size: 18px; line-height: 1.55; color: var(--muted-foreground); }
 .hero-actions { display: flex; gap: 24px; align-items: center; margin-top: 29px; }
 .hero-footnote { display: flex; align-items: center; gap: 8px; margin-top: 19px; font-size: 13px; color: var(--muted-foreground); }
