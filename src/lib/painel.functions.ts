@@ -57,13 +57,19 @@ export interface TeamRegistrationRow {
   isCnaStudent: boolean;
   isBlocked: boolean;
   blockReason: string | null;
+  orderCode: string;
+  paymentStatus: string;
+  hasReceipt: boolean;
+  paidClaimedAt: string | null;
+  decidedAt: string | null;
+  refusalReason: string | null;
 }
 
 async function loadRegistrations(): Promise<TeamRegistrationRow[]> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("team_registrations")
-    .select("id, created_at, player1_name, player2_name, phone, is_cna_student, is_blocked, block_reason")
+    .select("id, created_at, player1_name, player2_name, phone, is_cna_student, is_blocked, block_reason, order_code, payment_status, receipt_path, paid_claimed_at, decided_at, refusal_reason")
     .order("created_at", { ascending: true });
   if (error) throw new Error("Não foi possível carregar as inscrições.");
   return (data ?? []).map((row) => ({
@@ -75,6 +81,12 @@ async function loadRegistrations(): Promise<TeamRegistrationRow[]> {
     isCnaStudent: row.is_cna_student,
     isBlocked: row.is_blocked,
     blockReason: row.block_reason,
+    orderCode: row.order_code ?? "",
+    paymentStatus: row.payment_status,
+    hasReceipt: !!row.receipt_path,
+    paidClaimedAt: row.paid_claimed_at,
+    decidedAt: row.decided_at,
+    refusalReason: row.refusal_reason,
   }));
 }
 
@@ -177,4 +189,44 @@ export const deleteTeamRegistration = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin.from("team_registrations").delete().eq("id", data.id);
     if (error) throw new Error("Não foi possível apagar a inscrição.");
     return { ok: true as const };
+  });
+
+export const setPaymentStatus = createServerFn({ method: "POST" })
+  .inputValidator((input: { id: string; status: "confirmado" | "recusado"; reason?: string }) => {
+    if (!uuidRe.test(String(input?.id ?? ""))) throw new Error("Inscrição inválida.");
+    if (input.status !== "confirmado" && input.status !== "recusado") throw new Error("Status inválido.");
+    const reason = String(input.reason ?? "").trim().slice(0, 300);
+    if (input.status === "recusado" && reason.length < 3) throw new Error("Informe o motivo da recusa.");
+    return { id: input.id, status: input.status, reason };
+  })
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("team_registrations")
+      .update({
+        payment_status: data.status,
+        decided_at: new Date().toISOString(),
+        refusal_reason: data.status === "recusado" ? data.reason : null,
+      })
+      .eq("id", data.id);
+    if (error) throw new Error("Não foi possível atualizar o pagamento.");
+    return { ok: true as const };
+  });
+
+export const getReceiptUrl = createServerFn({ method: "POST" })
+  .inputValidator((input: { id: string }) => {
+    if (!uuidRe.test(String(input?.id ?? ""))) throw new Error("Inscrição inválida.");
+    return { id: input.id };
+  })
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("team_registrations").select("receipt_path").eq("id", data.id).maybeSingle();
+    if (!row?.receipt_path) throw new Error("Sem comprovante.");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("comprovantes").createSignedUrl(row.receipt_path, 300);
+    if (error || !signed) throw new Error("Não foi possível abrir o comprovante.");
+    return { url: signed.signedUrl };
   });
