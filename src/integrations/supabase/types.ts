@@ -18,32 +18,50 @@ export type Database = {
         Row: {
           block_reason: string | null
           created_at: string
+          decided_at: string | null
           id: string
           is_blocked: boolean
           is_cna_student: boolean
+          order_code: string | null
+          paid_claimed_at: string | null
+          payment_status: string
           phone: string
           player1_name: string
           player2_name: string
+          receipt_path: string | null
+          refusal_reason: string | null
         }
         Insert: {
           block_reason?: string | null
           created_at?: string
+          decided_at?: string | null
           id?: string
           is_blocked?: boolean
           is_cna_student: boolean
+          order_code?: string | null
+          paid_claimed_at?: string | null
+          payment_status?: string
           phone: string
           player1_name: string
           player2_name: string
+          receipt_path?: string | null
+          refusal_reason?: string | null
         }
         Update: {
           block_reason?: string | null
           created_at?: string
+          decided_at?: string | null
           id?: string
           is_blocked?: boolean
           is_cna_student?: boolean
+          order_code?: string | null
+          paid_claimed_at?: string | null
+          payment_status?: string
           phone?: string
           player1_name?: string
           player2_name?: string
+          receipt_path?: string | null
+          refusal_reason?: string | null
         }
         Relationships: []
       }
