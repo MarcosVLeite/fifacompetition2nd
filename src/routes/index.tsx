@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { useServerFn } from "@tanstack/react-start";
+import { createRegistration } from "@/lib/pagamento.functions";
+import { PixPayment } from "@/components/PixPayment";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";
 import cnaTrofeu from "@/assets/cna-trofeu.png.asset.json";
 
@@ -40,6 +42,8 @@ function Index() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [order, setOrder] = useState<{ code: string; phone: string } | null>(null);
+  const createReg = useServerFn(createRegistration);
 
   const openRegistration = () => { setRegistrationOpen(true); setSubmitted(false); setSubmitError(""); };
   const viewEvent = () => document.getElementById("campeonato")?.scrollIntoView({ behavior: "smooth" });
@@ -59,16 +63,21 @@ function Index() {
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("team_registrations").insert({
-      player1_name: parsed.data.player1,
-      player2_name: parsed.data.player2,
-      phone: parsed.data.phone,
-      is_cna_student: parsed.data.isCnaStudent === "sim",
-    });
-    setSubmitting(false);
-    if (error) { setSubmitError("Não foi possível enviar sua inscrição. Tente novamente."); return; }
-    setSubmitted(true);
-    setForm(emptyForm);
+    try {
+      const { code } = await createReg({ data: {
+        player1: parsed.data.player1,
+        player2: parsed.data.player2,
+        phone: parsed.data.phone,
+        isCnaStudent: parsed.data.isCnaStudent === "sim",
+      } });
+      setOrder({ code, phone: parsed.data.phone });
+      setSubmitted(true);
+      setForm(emptyForm);
+    } catch {
+      setSubmitError("Não foi possível enviar sua inscrição. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -143,10 +152,11 @@ function Index() {
       <Dialog open={registrationOpen} onOpenChange={setRegistrationOpen}>
         <DialogContent className="w-[calc(100%-32px)] max-w-md rounded-md">
           {submitted ? (
-            <div className="py-6 text-center">
+            <div className="max-h-[80vh] overflow-y-auto py-2 text-center">
               <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-primary text-primary-foreground"><Check size={28} /></div>
-              <DialogHeader><DialogTitle className="font-display text-2xl leading-tight">INSCRIÇÃO ENVIADA!</DialogTitle><DialogDescription className="pt-3 text-base">Sua dupla está na lista. Nos vemos no dia 05 de dezembro, às 14h, no CNA Itapecerica da Serra.</DialogDescription></DialogHeader>
-              <Button variant="arena" className="mt-6 h-12 w-full" onClick={() => setRegistrationOpen(false)}>Fechar</Button>
+              <DialogHeader><DialogTitle className="font-display text-2xl leading-tight">INSCRIÇÃO ENVIADA!</DialogTitle><DialogDescription className="pt-3 text-base">Agora pague via Pix para garantir a vaga. Guarde o código abaixo para acompanhar o status.</DialogDescription></DialogHeader>
+              {order && <div className="mt-4"><PixPayment code={order.code} phone={order.phone} /></div>}
+              <Button variant="arenaOutline" className="mt-4 h-12 w-full" onClick={() => setRegistrationOpen(false)}>Fechar</Button>
             </div>
           ) : (
             <>
