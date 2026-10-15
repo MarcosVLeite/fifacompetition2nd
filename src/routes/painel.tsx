@@ -8,6 +8,8 @@ import {
   lockPainel,
   unblockTeamRegistration,
   updateTeamRegistration,
+  setPaymentStatus,
+  getReceiptUrl,
   type TeamRegistrationRow,
 } from "@/lib/painel.functions";
 import { Button } from "@/components/ui/button";
@@ -20,6 +22,8 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
   const update = useServerFn(updateTeamRegistration);
   const remove = useServerFn(deleteTeamRegistration);
   const unblock = useServerFn(unblockTeamRegistration);
+  const setPay = useServerFn(setPaymentStatus);
+  const receipt = useServerFn(getReceiptUrl);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +46,18 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
     } finally {
       setBusy(false);
     }
+  }
+
+  function handleRefuse() {
+    const reason = window.prompt("Motivo da recusa:");
+    if (!reason) return;
+    void run(() => setPay({ data: { id: row.id, status: "recusado", reason } }));
+  }
+
+  async function openReceipt() {
+    const w = window.open("", "_blank");
+    try { const { url } = await receipt({ data: { id: row.id } }); if (w) w.location.href = url; }
+    catch (e) { w?.close(); setError(e instanceof Error ? e.message : "Erro."); }
   }
 
   function handleDelete() {
@@ -97,6 +113,22 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
           <td className="px-4 py-3 text-foreground">{row.isCnaStudent ? "Sim" : "Não"}</td>
         </>
       )}
+      <td className="px-4 py-3 text-xs">
+        <p className="font-display text-sm text-foreground">{row.orderCode}</p>
+        <p className={row.paymentStatus === "confirmado" ? "text-info" : row.paymentStatus === "recusado" ? "text-destructive" : row.paymentStatus === "aguardando_confirmacao" ? "font-semibold text-primary" : "text-muted-foreground"}>
+          {PAY_LABEL[row.paymentStatus] ?? row.paymentStatus}
+        </p>
+        {row.paidClaimedAt && <p className="text-muted-foreground">Aviso: {formatDateTime(row.paidClaimedAt)}</p>}
+        {row.decidedAt && <p className="text-muted-foreground">Decisão: {formatDateTime(row.decidedAt)}</p>}
+        {row.refusalReason && <p className="text-muted-foreground">Motivo: {row.refusalReason}</p>}
+        {row.hasReceipt && <button className="underline text-foreground" onClick={openReceipt}>Ver comprovante</button>}
+        {row.paymentStatus !== "confirmado" && (
+          <div className="mt-1 flex gap-1">
+            <Button size="sm" variant="arena" disabled={busy} onClick={() => run(() => setPay({ data: { id: row.id, status: "confirmado" } }))}>Confirmar</Button>
+            {row.paymentStatus !== "recusado" && <Button size="sm" variant="arenaOutline" disabled={busy} onClick={handleRefuse}>Recusar</Button>}
+          </div>
+        )}
+      </td>
       <td className="px-4 py-3">
         <div className="flex gap-2">
           {editing ? (
@@ -127,6 +159,13 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
   );
 }
 
+const PAY_LABEL: Record<string, string> = {
+  aguardando_pagamento: "Aguardando pagamento",
+  aguardando_confirmacao: "Aguardando confirmação",
+  confirmado: "Confirmado",
+  recusado: "Recusado",
+};
+
 export const Route = createFileRoute("/painel")({
   loader: () => getTeamRegistrations(),
   head: () => ({
@@ -151,9 +190,11 @@ function formatDateTime(iso: string): string {
 }
 
 function buildCsv(rows: TeamRegistrationRow[]): string {
-  const header = ["Data da inscrição", "Jogador 1", "Jogador 2", "Telefone", "Alunos do CNA", "Status"];
+  const header = ["Código", "Pagamento", "Data da inscrição", "Jogador 1", "Jogador 2", "Telefone", "Alunos do CNA", "Status"];
   const lines = rows.map((r) =>
     [
+      r.orderCode,
+      PAY_LABEL[r.paymentStatus] ?? r.paymentStatus,
       formatDateTime(r.createdAt),
       r.player1Name,
       r.player2Name,
@@ -188,6 +229,7 @@ function Painel() {
   const [checking, setChecking] = useState(false);
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
 
   const total = registrations.length;
   const blocked = registrations.filter((r) => r.isBlocked).length;
@@ -199,12 +241,15 @@ function Painel() {
   const normalizedSearch = search.trim().toLowerCase();
   const filtered = normalizedSearch
     ? registrations.filter((r) =>
-        [r.player1Name, r.player2Name, r.phone]
+        [r.player1Name, r.player2Name, r.phone, r.orderCode]
           .join(" ")
           .toLowerCase()
           .includes(normalizedSearch),
       )
     : registrations;
+  const shown = statusFilter === "todos" ? filtered : filtered.filter((r) => r.paymentStatus === statusFilter);
+  const confirmed = registrations.filter((r) => r.paymentStatus === "confirmado").length;
+  const pendingReview = registrations.filter((r) => r.paymentStatus === "aguardando_confirmacao").length;
 
   async function handleLock() {
     await lock();
@@ -235,7 +280,7 @@ function Painel() {
 
   return (
     <div className="min-h-screen bg-background px-4 py-10">
-      <div className="mx-auto w-full max-w-4xl">
+      <div className="mx-auto w-full max-w-6xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="font-display text-3xl leading-tight text-foreground">
@@ -307,11 +352,19 @@ function Painel() {
             <input
               type="search"
               aria-label="Buscar dupla por nome ou telefone"
-              placeholder="Buscar por nome ou telefone…"
+              placeholder="Buscar por nome, telefone ou código…"
               className="w-full max-w-sm rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+            <select aria-label="Filtrar por pagamento" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
+              className="ml-2 mt-2 rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground sm:mt-0">
+              <option value="todos">Todos os pagamentos</option>
+              {Object.entries(PAY_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            </select>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {confirmed} pagamento(s) confirmado(s) · <span className={pendingReview ? "font-semibold text-primary" : ""}>{pendingReview} aguardando sua confirmação</span>
+            </p>
           </div>
         )}
 
@@ -329,11 +382,12 @@ function Painel() {
                   <th className="px-4 py-3 font-medium">Jogador 2</th>
                   <th className="px-4 py-3 font-medium">Telefone</th>
                   <th className="px-4 py-3 font-medium">Alunos do CNA</th>
+                  <th className="px-4 py-3 font-medium">Pagamento</th>
                   <th className="px-4 py-3 font-medium">Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {registrations.map((r) => (
+                {shown.map((r) => (
                   <RegistrationRow key={r.id} row={r} />
                 ))}
               </tbody>
