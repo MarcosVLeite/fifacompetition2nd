@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Users, Ticket, Check, Loader2 } from "lucide-react";
+import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Users, Ticket, Check, Loader2, Trophy, Medal } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -12,7 +12,7 @@ import { PixPayment } from "@/components/PixPayment";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";
 import cnaTrofeu from "@/assets/cna-trofeu.png.asset.json";
 
-const description = "Monte sua dupla para o CNA FIFA COMPETITION no CNA Itapecerica da Serra. Dia 05 de dezembro, às 14h. Inscrição: R$ 20 por dupla.";
+const description = "Monte sua dupla para o CNA FIFA COMPETITION em Itapecerica da Serra: 05 de dezembro, 14h. Inscrição R$ 20. Prêmios: R$ 150 para a dupla campeã e descontos no curso.";
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "CNA FIFA COMPETITION — Entre em campo com sua dupla" },
@@ -128,12 +128,37 @@ function Index() {
           </section>
         </div>
 
+        <section id="premiacao" className="site-wrap section scroll-mt-6">
+          <div className="section-label eyebrow"><span>02 /</span> Premiação</div>
+          <div className="prize-head">
+            <h2 className="section-title">O PÓDIO TEM<br /><span className="text-primary">RECOMPENSA.</span></h2>
+            <p className="section-copy mt-4 max-w-md">Valeu cada passe. As três melhores duplas sobem ao pódio e ainda contam com desconto no curso.</p>
+          </div>
+          <div className="prize-grid">
+            <article className="prize-card prize-card--top">
+              <div className="prize-rank eyebrow"><Trophy /> 1º lugar</div>
+              <div className="prize-value">R$ 150<span className="prize-unit">para a dupla</span></div>
+              <p className="prize-note">Dinheiro na mão para dividir com o parceiro — mais desconto no curso.</p>
+            </article>
+            <article className="prize-card">
+              <div className="prize-rank eyebrow"><Medal /> 2º lugar</div>
+              <div className="prize-value prize-value--soft">Desconto<span className="prize-unit">no curso</span></div>
+              <p className="prize-note">Vice-campeões também sobem ao pódio.</p>
+            </article>
+            <article className="prize-card">
+              <div className="prize-rank eyebrow"><Medal /> 3º lugar</div>
+              <div className="prize-value prize-value--soft">Desconto<span className="prize-unit">no curso</span></div>
+              <p className="prize-note">O terceiro lugar também é premiado.</p>
+            </article>
+          </div>
+        </section>
+
         <section className="invitation">
           <div className="site-wrap invitation-inner"><div><div className="eyebrow mb-3">Sua próxima partida tem data marcada</div><h2>SUA DUPLA ESTÁ PRONTA?</h2><p>05 de dezembro · 14h · CNA Itapecerica da Serra</p></div><Button variant="arenaDark" onClick={openRegistration} className="h-13 px-7 text-base">Vamos para o jogo <ArrowUpRight /></Button></div>
         </section>
 
         <section className="site-wrap section">
-          <div className="section-label eyebrow"><span>02 /</span> Antes do apito</div>
+          <div className="section-label eyebrow"><span>03 /</span> Antes do apito</div>
           <div className="faq-grid"><div><h2 className="section-title">TIRE SUAS<br /><span className="text-primary">DÚVIDAS.</span></h2><p className="section-copy mt-4">Tudo certo para entrar em campo.</p></div><div>
             {[
               ["Preciso participar em dupla?", "Sim! O campeonato será em duplas. Convide seu parceiro para participar com você."],
@@ -141,6 +166,7 @@ function Index() {
               ["Quando e onde vai acontecer?", "No dia 05 de dezembro, às 14h (2:00 p.m.), no CNA Itapecerica da Serra."],
               ["Em qual plataforma será jogado?", "As partidas serão disputadas no PlayStation."],
               ["Quanto tempo dura cada partida?", "Cada partida terá 6 minutos."],
+              ["Tem premiação?", "Sim. O 1º lugar leva R$ 150 para a dupla, além de desconto no curso. O 2º e o 3º lugares também recebem desconto no curso."],
               ["Como faço para me inscrever?", "Clique em \"Quero participar\" e preencha o formulário com os dados da sua dupla."],
             ].map(([question, answer]) => <details className="faq-item" key={question}><summary>{question}<Plus /></summary><p>{answer}</p></details>)}
           </div></div>
