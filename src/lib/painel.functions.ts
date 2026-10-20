@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useSession } from "@tanstack/react-start/server";
 import { redirect } from "@tanstack/react-router";
 import { createHash, timingSafeEqual } from "node:crypto";
+import { generateBracket, setResult, clearResult, isStarted, pendingCount, type Bracket } from "@/lib/bracket";
 
 const sessionConfig = {
   password: process.env["SESSION_SECRET"]!, // server-only; 32+ chars
@@ -229,4 +230,125 @@ export const getReceiptUrl = createServerFn({ method: "POST" })
       .from("comprovantes").createSignedUrl(row.receipt_path, 300);
     if (error || !signed) throw new Error("Não foi possível abrir o comprovante.");
     return { url: signed.signedUrl };
+  });
+
+// ---------------- Campeonatos (mata-mata) ----------------
+
+export type TournamentStatus = "aguardando" | "em_andamento" | "finalizado";
+export interface TournamentDTO {
+  id: string; name: string; status: TournamentStatus; participantIds: string[];
+  bracket: Bracket; version: number; createdAt: string;
+}
+export interface TeamOption { id: string; label: string; orderCode: string; paymentStatus: string }
+
+async function admin() {
+  return (await import("@/integrations/supabase/client.server")).supabaseAdmin;
+}
+
+function toDTO(r: { id: string; name: string; status: string; participant_ids: string[]; bracket: unknown; version: number; created_at: string }): TournamentDTO {
+  return { id: r.id, name: r.name, status: r.status as TournamentStatus, participantIds: r.participant_ids, bracket: r.bracket as Bracket, version: r.version, createdAt: r.created_at };
+}
+
+async function validTeamIds(ids: string[]) {
+  if (new Set(ids).size !== ids.length) throw new Error("Há duplas repetidas na seleção.");
+  if (ids.length < 2) throw new Error("Selecione pelo menos 2 duplas.");
+  if (ids.length > 128) throw new Error("Máximo de 128 duplas.");
+  const { data, error } = await (await admin()).from("team_registrations").select("id").in("id", ids).eq("is_blocked", false);
+  if (error) throw new Error("Não foi possível validar as duplas.");
+  if ((data ?? []).length !== ids.length) throw new Error("Alguma dupla selecionada não existe mais ou está bloqueada. Atualize a página.");
+}
+
+async function loadTournament(id: string) {
+  const { data, error } = await (await admin()).from("tournaments").select("*").eq("id", id).maybeSingle();
+  if (error || !data) throw new Error("Campeonato não encontrado.");
+  return toDTO(data);
+}
+
+// Optimistic concurrency: write only if nobody saved since the client loaded `version`.
+async function save(id: string, version: number, patch: { name?: string; status?: TournamentStatus; participant_ids?: string[]; bracket?: Bracket }) {
+  const { data, error } = await (await admin()).from("tournaments")
+    .update({ ...patch, bracket: patch.bracket as never, version: version + 1, updated_at: new Date().toISOString() })
+    .eq("id", id).eq("version", version).select("*");
+  if (error) throw new Error("Não foi possível salvar o campeonato.");
+  if (!data || data.length === 0) throw new Error("Outro organizador alterou este campeonato. Atualize a página e tente de novo.");
+  return toDTO(data[0]);
+}
+
+function statusFor(b: Bracket): TournamentStatus {
+  return isStarted(b) ? "em_andamento" : "aguardando";
+}
+
+export const getTournaments = createServerFn({ method: "GET" }).handler(async () => {
+  await requireUnlocked();
+  const db = await admin();
+  const [t, r] = await Promise.all([
+    db.from("tournaments").select("*").order("created_at", { ascending: false }),
+    db.from("team_registrations").select("id, player1_name, player2_name, order_code, payment_status, is_blocked").order("created_at", { ascending: true }),
+  ]);
+  if (t.error || r.error) throw new Error("Não foi possível carregar os campeonatos.");
+  const teams: Record<string, string> = {};
+  const options: TeamOption[] = [];
+  for (const x of r.data ?? []) {
+    const label = `${x.player1_name} & ${x.player2_name}`;
+    teams[x.id] = label;
+    if (!x.is_blocked) options.push({ id: x.id, label, orderCode: x.order_code ?? "", paymentStatus: x.payment_status });
+  }
+  return { tournaments: (t.data ?? []).map(toDTO), teams, options };
+});
+
+export const createTournament = createServerFn({ method: "POST" })
+  .inputValidator((d: { name: string; participantIds: string[] }) => d)
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const name = data.name.trim();
+    if (name.length < 2 || name.length > 80) throw new Error("Dê um nome de 2 a 80 letras ao campeonato.");
+    await validTeamIds(data.participantIds);
+    const bracket = generateBracket(data.participantIds);
+    const { data: row, error } = await (await admin()).from("tournaments")
+      .insert({ name, participant_ids: data.participantIds, bracket: bracket as never, status: "aguardando" }).select("*").single();
+    if (error || !row) throw new Error("Não foi possível criar o campeonato.");
+    return toDTO(row);
+  });
+
+export const regenerateTournament = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string; version: number; name: string; participantIds: string[]; confirmWipe: boolean }) => d)
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const t = await loadTournament(data.id);
+    if (isStarted(t.bracket) && !data.confirmWipe) throw new Error("O campeonato já começou: confirme que quer apagar todos os resultados.");
+    const name = data.name.trim();
+    if (name.length < 2 || name.length > 80) throw new Error("Dê um nome de 2 a 80 letras ao campeonato.");
+    await validTeamIds(data.participantIds);
+    return save(data.id, data.version, { name, participant_ids: data.participantIds, bracket: generateBracket(data.participantIds), status: "aguardando" });
+  });
+
+export const saveMatchResult = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string; version: number; matchId: string; scoreA: number | null; scoreB: number | null }) => d)
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const t = await loadTournament(data.id);
+    const bracket = data.scoreA === null || data.scoreB === null
+      ? clearResult(t.bracket, data.matchId)
+      : setResult(t.bracket, data.matchId, data.scoreA, data.scoreB);
+    // A correction after finishing reopens the tournament.
+    return save(data.id, data.version, { bracket, status: statusFor(bracket) });
+  });
+
+export const finishTournament = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string; version: number }) => d)
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const t = await loadTournament(data.id);
+    const pending = pendingCount(t.bracket);
+    if (pending > 0) throw new Error(`Ainda há ${pending} partida(s) pendente(s).`);
+    return save(data.id, data.version, { status: "finalizado" });
+  });
+
+export const deleteTournament = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string }) => d)
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const { error } = await (await admin()).from("tournaments").delete().eq("id", data.id);
+    if (error) throw new Error("Não foi possível apagar o campeonato.");
+    return { ok: true };
   });

@@ -29,6 +29,13 @@
       "when": 1792100569621,
       "tag": "0003_pix_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792506236396,
+      "tag": "0004_create_tournaments",
+      "breakpoints": true
     }
   ]
 }

@@ -121,3 +121,13 @@
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .fade-in { animation: none; } * { transition: none !important; } }
 @media (max-width: 640px) { .hero { min-height: 0; } .hero-content { padding-bottom: 292px; } .hero-image { top: auto; height: 252px; object-position: 50% 40%; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 28%, #000 100%); mask-image: linear-gradient(180deg, transparent 0, #000 28%, #000 100%); } .hero::after { background: linear-gradient(180deg, transparent 0 62%, oklch(0.15 0.012 153 / 32%) 84%, var(--background) 100%); } .hero-copy { color: var(--foreground); } }
 
+
+/* Chaves mata-mata */
+.bracket .match-card.has-next::after { content: ''; position: absolute; right: -2rem; top: 50%; width: 2rem; border-top: 2px solid var(--border); }
+.bracket .match-card { animation: match-in .35s ease-out both; }
+.bracket .match-winner { animation: winner-glow .6s ease-out; }
+.champion-card { animation: champ-pop .6s cubic-bezier(.2,1.4,.4,1) both; box-shadow: 0 0 40px color-mix(in oklch, var(--primary) 35%, transparent); }
+@keyframes match-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes winner-glow { from { background: color-mix(in oklch, var(--primary) 45%, transparent); } }
+@keyframes champ-pop { from { opacity: 0; transform: scale(.9); } }
+@media (prefers-reduced-motion: reduce) { .bracket .match-card, .bracket .match-winner, .champion-card { animation: none; } }
