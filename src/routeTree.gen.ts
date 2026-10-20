@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AcompanharRouteImport } from './routes/acompanhar'
+import { Route as ChavesRouteImport } from './routes/chaves'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as PainelRouteImport } from './routes/painel'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const AcompanharRoute = AcompanharRouteImport.update({
   id: '/acompanhar',
   path: '/acompanhar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChavesRoute = ChavesRouteImport.update({
+  id: '/chaves',
+  path: '/chaves',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntrarRoute = EntrarRouteImport.update({
@@ -38,12 +44,14 @@ const PainelRoute = PainelRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/acompanhar': typeof AcompanharRoute
+  '/chaves': typeof ChavesRoute
   '/entrar': typeof EntrarRoute
   '/painel': typeof PainelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/acompanhar': typeof AcompanharRoute
+  '/chaves': typeof ChavesRoute
   '/entrar': typeof EntrarRoute
   '/painel': typeof PainelRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/acompanhar': typeof AcompanharRoute
+  '/chaves': typeof ChavesRoute
   '/entrar': typeof EntrarRoute
   '/painel': typeof PainelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/acompanhar' | '/entrar' | '/painel'
+  fullPaths: '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/acompanhar' | '/entrar' | '/painel'
-  id: '__root__' | '/' | '/acompanhar' | '/entrar' | '/painel'
+  to: '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel'
+  id: '__root__' | '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcompanharRoute: typeof AcompanharRoute
+  ChavesRoute: typeof ChavesRoute
   EntrarRoute: typeof EntrarRoute
   PainelRoute: typeof PainelRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/acompanhar'
       fullPath: '/acompanhar'
       preLoaderRoute: typeof AcompanharRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chaves': {
+      id: '/chaves'
+      path: '/chaves'
+      fullPath: '/chaves'
+      preLoaderRoute: typeof ChavesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrar': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcompanharRoute: AcompanharRoute,
+  ChavesRoute: ChavesRoute,
   EntrarRoute: EntrarRoute,
   PainelRoute: PainelRoute,
 }

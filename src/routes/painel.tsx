@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   deleteTeamRegistration,
@@ -307,6 +307,7 @@ function Painel() {
               Exportar CSV
             </Button>
             <Button variant="arenaOutline" onClick={handleLock}>
+            <Button variant="arenaOutline" asChild><Link to="/chaves">Chaves do campeonato</Link></Button>
               Bloquear
             </Button>
           </div>
