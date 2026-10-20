@@ -306,8 +306,8 @@ function Painel() {
             >
               Exportar CSV
             </Button>
-            <Button variant="arenaOutline" onClick={handleLock}>
             <Button variant="arenaOutline" asChild><Link to="/chaves">Chaves do campeonato</Link></Button>
+            <Button variant="arenaOutline" onClick={handleLock}>
               Bloquear
             </Button>
           </div>

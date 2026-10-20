@@ -28,7 +28,7 @@ export function shuffle<T>(items: T[], rng: () => number = Math.random): T[] {
   const a = [...items];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    const tmp = a[i] as T; a[i] = a[j] as T; a[j] = tmp;
   }
   return a;
 }
@@ -47,8 +47,8 @@ export function generateBracket(ids: string[], rng: () => number = Math.random):
   for (let r = 0; r < rounds; r++) {
     const count = size / 2 ** (r + 1);
     for (let s = 0; s < count; s++) {
-      const a = r === 0 ? positions[2 * s] : null;
-      const b = r === 0 ? positions[2 * s + 1] : null;
+      const a = r === 0 ? (positions[2 * s] ?? null) : null;
+      const b = r === 0 ? (positions[2 * s + 1] ?? null) : null;
       const bye = r === 0 && (a === null || b === null);
       matches.push({ id: `r${r}-m${s}`, round: r, slot: s, a, b, scoreA: null, scoreB: null, winner: bye ? (a ?? b) : null, bye });
     }

@@ -271,7 +271,7 @@ async function save(id: string, version: number, patch: { name?: string; status?
     .eq("id", id).eq("version", version).select("*");
   if (error) throw new Error("Não foi possível salvar o campeonato.");
   if (!data || data.length === 0) throw new Error("Outro organizador alterou este campeonato. Atualize a página e tente de novo.");
-  return toDTO(data[0]);
+  return toDTO(data[0]!);
 }
 
 function statusFor(b: Bracket): TournamentStatus {
