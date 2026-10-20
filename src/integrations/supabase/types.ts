@@ -65,6 +65,39 @@ export type Database = {
         }
         Relationships: []
       }
+      tournaments: {
+        Row: {
+          bracket: Json
+          created_at: string
+          id: string
+          name: string
+          participant_ids: string[]
+          status: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          bracket?: Json
+          created_at?: string
+          id?: string
+          name: string
+          participant_ids?: string[]
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          bracket?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          participant_ids?: string[]
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
