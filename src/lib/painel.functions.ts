@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useSession } from "@tanstack/react-start/server";
 import { redirect } from "@tanstack/react-router";
 import { createHash, timingSafeEqual } from "node:crypto";
+import { generateBracket, setResult, clearResult, isStarted, pendingCount, type Bracket } from "@/lib/bracket";
 
 const sessionConfig = {
   password: process.env["SESSION_SECRET"]!, // server-only; 32+ chars
@@ -232,7 +233,6 @@ export const getReceiptUrl = createServerFn({ method: "POST" })
   });
 
 // ---------------- Campeonatos (mata-mata) ----------------
-import { generateBracket, setResult, clearResult, isStarted, pendingCount, type Bracket } from "@/lib/bracket";
 
 export type TournamentStatus = "aguardando" | "em_andamento" | "finalizado";
 export interface TournamentDTO {
