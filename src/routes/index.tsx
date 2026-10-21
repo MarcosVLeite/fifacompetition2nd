@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useServerFn } from "@tanstack/react-start";
+import { formatPhone } from "@/lib/utils";
 import { createRegistration } from "@/lib/pagamento.functions";
 import { PixPayment } from "@/components/PixPayment";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { claimPayment } from "@/lib/pagamento.functions";
+import { formatPhone } from "@/lib/utils";
 
 export const PIX_KEY = "999999999";
 export const PRICE = "R$ 20,00";

@@ -13,6 +13,7 @@ import {
   type TeamRegistrationRow,
 } from "@/lib/painel.functions";
 import { Button } from "@/components/ui/button";
+import { formatPhone } from "@/lib/utils";
 
 const inputCls =
   "w-full min-w-28 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
