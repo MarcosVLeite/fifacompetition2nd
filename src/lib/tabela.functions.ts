@@ -38,7 +38,7 @@ export const getPublicBracket = createServerFn({ method: "GET" }).handler(async 
       id: t.id,
       name: t.name,
       status: t.status as TournamentStatus,
-      bracket: t.bracket as Bracket,
+      bracket: t.bracket as unknown as Bracket,
     })),
     teams,
   };
