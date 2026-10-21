@@ -82,8 +82,8 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
               onChange={(e) => setForm({ ...form, player2Name: e.target.value })} />
           </td>
           <td className="px-4 py-3">
-            <input aria-label="Telefone" className={inputCls} value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <input aria-label="Telefone" className={inputCls} value={form.phone} maxLength={15}
+              onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
           </td>
           <td className="px-4 py-3">
             <select aria-label="Alunos do CNA" className={inputCls}
