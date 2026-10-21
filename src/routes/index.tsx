@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useServerFn } from "@tanstack/react-start";
+import { formatPhone } from "@/lib/utils";
 import { createRegistration } from "@/lib/pagamento.functions";
 import { PixPayment } from "@/components/PixPayment";
 import heroAsset from "@/assets/monstros-futebol.png.asset.json";
@@ -201,7 +202,7 @@ function Index() {
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="phone">Telefone com DDD</Label>
-                  <Input id="phone" type="tel" value={form.phone} onChange={(e) => setField("phone", e.target.value)} maxLength={20} placeholder="(11) 99999-9999" autoComplete="tel" />
+                  <Input id="phone" type="tel" value={form.phone} onChange={(e) => setField("phone", formatPhone(e.target.value))} maxLength={15} placeholder="(11) 99999-9999" autoComplete="tel" />
                   {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
                 </div>
                 <fieldset className="space-y-1.5">

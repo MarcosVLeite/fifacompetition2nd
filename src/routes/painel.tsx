@@ -13,6 +13,7 @@ import {
   type TeamRegistrationRow,
 } from "@/lib/painel.functions";
 import { Button } from "@/components/ui/button";
+import { formatPhone } from "@/lib/utils";
 
 const inputCls =
   "w-full min-w-28 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
@@ -81,8 +82,8 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
               onChange={(e) => setForm({ ...form, player2Name: e.target.value })} />
           </td>
           <td className="px-4 py-3">
-            <input aria-label="Telefone" className={inputCls} value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <input aria-label="Telefone" className={inputCls} value={form.phone} maxLength={15}
+              onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
           </td>
           <td className="px-4 py-3">
             <select aria-label="Alunos do CNA" className={inputCls}

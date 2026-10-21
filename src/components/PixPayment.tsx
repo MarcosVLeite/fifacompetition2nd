@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { claimPayment } from "@/lib/pagamento.functions";
+import { formatPhone } from "@/lib/utils";
 
 export const PIX_KEY = "999999999";
 export const PRICE = "R$ 20,00";
@@ -59,7 +60,7 @@ export function PixPayment({ code, phone = "", onDone }: { code: string; phone?:
         <Button size="sm" variant="arena" onClick={() => copy(PIX_KEY, "pix")}>{copied === "pix" ? "Copiada!" : "Copiar chave"}</Button>
       </div>
       <p className="text-muted-foreground">Se possível, coloque o código <b className="text-foreground">{code}</b> na descrição do Pix.</p>
-      <div className="space-y-1.5"><Label htmlFor="pay-phone">Telefone da inscrição</Label><Input id="pay-phone" value={tel} onChange={(e) => setTel(e.target.value)} /></div>
+      <div className="space-y-1.5"><Label htmlFor="pay-phone">Telefone da inscrição</Label><Input id="pay-phone" type="tel" value={tel} onChange={(e) => setTel(formatPhone(e.target.value))} maxLength={15} placeholder="(11) 99999-9999" /></div>
       <div className="space-y-1.5"><Label htmlFor="pay-file">Comprovante (opcional, imagem ou PDF até 5 MB)</Label>
         <Input id="pay-file" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} /></div>
       {error && <p className="text-destructive" role="alert">{error}</p>}
