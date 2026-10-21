@@ -14,6 +14,7 @@ import { Route as AcompanharRouteImport } from './routes/acompanhar'
 import { Route as ChavesRouteImport } from './routes/chaves'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as PainelRouteImport } from './routes/painel'
+import { Route as TabelaRouteImport } from './routes/tabela'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const PainelRoute = PainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TabelaRoute = TabelaRouteImport.update({
+  id: '/tabela',
+  path: '/tabela',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/chaves': typeof ChavesRoute
   '/entrar': typeof EntrarRoute
   '/painel': typeof PainelRoute
+  '/tabela': typeof TabelaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/chaves': typeof ChavesRoute
   '/entrar': typeof EntrarRoute
   '/painel': typeof PainelRoute
+  '/tabela': typeof TabelaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,21 @@ export interface FileRoutesById {
   '/chaves': typeof ChavesRoute
   '/entrar': typeof EntrarRoute
   '/painel': typeof PainelRoute
+  '/tabela': typeof TabelaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel'
+  fullPaths: '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel' | '/tabela'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel'
-  id: '__root__' | '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel'
+  to: '/' | '/acompanhar' | '/chaves' | '/entrar' | '/painel' | '/tabela'
+  id:
+    | '__root__'
+    | '/'
+    | '/acompanhar'
+    | '/chaves'
+    | '/entrar'
+    | '/painel'
+    | '/tabela'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +93,7 @@ export interface RootRouteChildren {
   ChavesRoute: typeof ChavesRoute
   EntrarRoute: typeof EntrarRoute
   PainelRoute: typeof PainelRoute
+  TabelaRoute: typeof TabelaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PainelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tabela': {
+      id: '/tabela'
+      path: '/tabela'
+      fullPath: '/tabela'
+      preLoaderRoute: typeof TabelaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +149,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChavesRoute: ChavesRoute,
   EntrarRoute: EntrarRoute,
   PainelRoute: PainelRoute,
+  TabelaRoute: TabelaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

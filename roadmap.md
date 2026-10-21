@@ -1,5 +1,7 @@
 # Campeonatos mata-mata
-- [ ] Integrar seleção de duplas reais e gerenciamento de campeonatos ao painel.
-- [ ] Salvar chaves e resultados com proteção do organizador e controle de alterações concorrentes.
-- [ ] Gerar mata-mata com BYEs, confirmar vencedores e corrigir fases seguintes.
-- [ ] Verificar regras com testes e fluxo completo no painel.
+- [x] Integrar seleção de duplas reais e gerenciamento de campeonatos ao painel.
+- [x] Salvar chaves e resultados com proteção do organizador e controle de alterações concorrentes.
+- [x] Gerar mata-mata com BYEs, confirmar vencedores e corrigir fases seguintes.
+- [x] Verificar regras com testes (vitest).
+- [x] Página pública /tabela (somente leitura, atualização automática) com a chave mata-mata.
+- [ ] Testar fluxo completo das chaves na prévia (criar campeonato, placares, finalizar, campeã).
