@@ -3,7 +3,7 @@ import { formatPhone } from "./utils";
 
 describe("formatPhone", () => {
   it("formats a mobile number as (11) 99999-9999", () => {
-    expect(formatPhone("11987654321")).toBe("(11) 99999-9999");
+    expect(formatPhone("11987654321")).toBe("(11) 98765-4321");
   });
 
   it("formats a landline as (11) 9999-9999", () => {
