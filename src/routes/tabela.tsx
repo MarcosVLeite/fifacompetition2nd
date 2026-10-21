@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Trophy } from "lucide-react";
@@ -45,8 +45,10 @@ function Avatar({ label }: { label: string }) {
 function Tabela() {
   const { data, dataUpdatedAt } = useSuspenseQuery(tabelaQuery);
   const [selectedId, setSelectedId] = useState<string | null>(data.tournaments[0]?.id ?? null);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
   const selected = data.tournaments.find((t) => t.id === selectedId) ?? data.tournaments[0] ?? null;
-  const atualizado = new Date(dataUpdatedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const atualizado = hydrated ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : null;
 
   return (
     <div className="min-h-screen bg-background px-4 py-10">
@@ -57,7 +59,7 @@ function Tabela() {
             <p className="mt-1 text-sm text-muted-foreground">Mata-mata ao vivo — CNA FIFA COMPETITION</p>
           </div>
           <p className="text-xs text-muted-foreground">
-            Atualiza automaticamente · visto às {atualizado} · <Link to="/" className="underline underline-offset-4">Página inicial</Link>
+            Atualiza automaticamente{atualizado ? ` · visto às ${atualizado}` : ""} · <Link to="/" className="underline underline-offset-4">Página inicial</Link>
           </p>
         </div>
 
