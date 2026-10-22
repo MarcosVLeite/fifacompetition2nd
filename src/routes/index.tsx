@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Users, Ticket, Check, Loader2, Trophy, Medal } from "lucide-react";
+import { ArrowDown, ArrowUpRight, CalendarDays, Clock3, Gamepad2, MapPin, Plus, Users, Ticket, Check, Loader2, Trophy, Medal, Radio } from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -89,7 +89,10 @@ function Index() {
           <span className="event-wordmark"><span className="wm-cna">CNA </span>FIFA<br /><span className="text-muted-foreground">COMPETITION</span></span>
         </div>
         <div className="header-place flex items-center gap-2 text-sm text-muted-foreground"><MapPin size={15} /> CNA Itapecerica da Serra</div>
-        <Button variant="arenaOutline" onClick={openRegistration} className="h-10 px-5">Quero participar <ArrowUpRight /></Button>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" asChild className="hidden h-10 px-4 text-sm sm:inline-flex"><Link to="/tabela"><Radio /> Tabela ao vivo</Link></Button>
+          <Button variant="arenaOutline" onClick={openRegistration} className="h-10 px-5">Quero participar <ArrowUpRight /></Button>
+        </div>
       </header>
 
       <main>
@@ -102,6 +105,7 @@ function Index() {
             <p className="hero-copy">Chame seu parceiro. Escolha seu time.<br />É hora de levar sua dupla ao <span className="text-info">próximo&nbsp;nível</span>.</p>
             <div className="hero-actions">
               <Button variant="arena" className="h-13 px-7 text-base" onClick={openRegistration}>Quero entrar em campo <ArrowUpRight size={19} /></Button>
+              <Button variant="arenaOutline" asChild className="h-13 px-6 text-base"><Link to="/tabela"><Radio size={18} /> Tabela ao vivo</Link></Button>
               <Button variant="ghost" className="h-13 px-0 text-sm" onClick={viewEvent}>Conheça o campeonato <ArrowDown /></Button>
             </div>
             <div className="hero-footnote"><Users size={15} /> <span className="text-info">R$ 20 por dupla</span> <span className="mx-1">·</span> Evento presencial</div>
