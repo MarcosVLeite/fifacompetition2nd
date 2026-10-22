@@ -322,6 +322,19 @@ export const regenerateTournament = createServerFn({ method: "POST" })
     return save(data.id, data.version, { name, participant_ids: data.participantIds, bracket: generateBracket(data.participantIds), status: "aguardando" });
   });
 
+export const restartTournament = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string; version: number; confirmWipe: boolean }) => {
+    if (!uuidRe.test(String(d?.id ?? "")) || !Number.isInteger(d?.version) || d.version < 1) throw new Error("Campeonato inválido.");
+    if (d.confirmWipe !== true) throw new Error("Confirme que quer recomeçar e apagar todos os resultados.");
+    return { id: d.id, version: d.version, confirmWipe: true };
+  })
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const t = await loadTournament(data.id);
+    await validTeamIds(t.participantIds);
+    return save(t.id, data.version, { bracket: generateBracket(t.participantIds), status: "aguardando" });
+  });
+
 export const saveMatchResult = createServerFn({ method: "POST" })
   .inputValidator((d: { id: string; version: number; matchId: string; scoreA: number | null; scoreB: number | null }) => d)
   .handler(async ({ data }) => {
