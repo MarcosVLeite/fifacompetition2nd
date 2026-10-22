@@ -1,4 +1,5 @@
 # Campeonatos mata-mata
+- [ ] Adicionar recomeço confirmado com novo sorteio das mesmas duplas e verificar suas regras.
 - [x] Integrar seleção de duplas reais e gerenciamento de campeonatos ao painel.
 - [x] Salvar chaves e resultados com proteção do organizador e controle de alterações concorrentes.
 - [x] Gerar mata-mata com BYEs, confirmar vencedores e corrigir fases seguintes.
