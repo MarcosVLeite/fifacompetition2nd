@@ -4,12 +4,12 @@ import { redirect } from "@tanstack/react-router";
 import { createHash, timingSafeEqual } from "node:crypto";
 import { generateBracket, setResult, clearResult, isStarted, pendingCount, type Bracket } from "@/lib/bracket";
 
-const sessionConfig = {
+function getSessionConfig() { return {
   password: process.env["SESSION_SECRET"]!, // server-only; 32+ chars
   name: "painel-gate",
   maxAge: 60 * 60 * 24 * 7, // 7 days
   cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
-};
+}; }
 
 type PainelSession = { unlocked?: boolean };
 
@@ -23,7 +23,7 @@ function passwordMatches(input: string, expected: string): boolean {
 
 // Server-only gate: throws a redirect BEFORE any protected work runs.
 async function requireUnlocked() {
-  const session = await useSession<PainelSession>(sessionConfig);
+  const session = await useSession<PainelSession>(getSessionConfig());
   if (!session.data.unlocked) throw redirect({ to: "/entrar" });
   return session;
 }
@@ -38,13 +38,13 @@ export const unlockPainel = createServerFn({ method: "POST" })
       return { ok: false as const }; // generic failure — reveal nothing more
     }
 
-    const session = await useSession<PainelSession>(sessionConfig);
+    const session = await useSession<PainelSession>(getSessionConfig());
     await session.update({ unlocked: true });
     return { ok: true as const };
   });
 
 export const lockPainel = createServerFn({ method: "POST" }).handler(async () => {
-  const session = await useSession<PainelSession>(sessionConfig);
+  const session = await useSession<PainelSession>(getSessionConfig());
   await session.clear();
   return { ok: true as const };
 });
@@ -320,6 +320,19 @@ export const regenerateTournament = createServerFn({ method: "POST" })
     if (name.length < 2 || name.length > 80) throw new Error("Dê um nome de 2 a 80 letras ao campeonato.");
     await validTeamIds(data.participantIds);
     return save(data.id, data.version, { name, participant_ids: data.participantIds, bracket: generateBracket(data.participantIds), status: "aguardando" });
+  });
+
+export const restartTournament = createServerFn({ method: "POST" })
+  .inputValidator((d: { id: string; version: number; confirmWipe: boolean }) => {
+    if (!uuidRe.test(String(d?.id ?? "")) || !Number.isInteger(d?.version) || d.version < 1) throw new Error("Campeonato inválido.");
+    if (d.confirmWipe !== true) throw new Error("Confirme que quer recomeçar e apagar todos os resultados.");
+    return { id: d.id, version: d.version, confirmWipe: true };
+  })
+  .handler(async ({ data }) => {
+    await requireUnlocked();
+    const t = await loadTournament(data.id);
+    await validTeamIds(t.participantIds);
+    return save(t.id, data.version, { bracket: generateBracket(t.participantIds), status: "aguardando" });
   });
 
 export const saveMatchResult = createServerFn({ method: "POST" })

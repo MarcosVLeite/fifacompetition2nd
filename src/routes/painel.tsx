@@ -173,6 +173,10 @@ export const Route = createFileRoute("/painel")({
     meta: [
       { title: "Duplas inscritas | CNA FIFA COMPETITION" },
       { name: "description", content: "Lista de duplas inscritas no campeonato (acesso restrito)." },
+      { property: "og:title", content: "Duplas inscritas | CNA FIFA COMPETITION" },
+      { property: "og:description", content: "Gerenciamento restrito das duplas inscritas no CNA FIFA COMPETITION." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),

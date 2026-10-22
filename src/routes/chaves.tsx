@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Trophy } from "lucide-react";
+import { Shuffle, Trophy } from "lucide-react";
 import {
   createTournament, deleteTournament, finishTournament, getTournaments,
-  regenerateTournament, saveMatchResult, type TeamOption, type TournamentDTO,
+  regenerateTournament, restartTournament, saveMatchResult, type TeamOption, type TournamentDTO,
 } from "@/lib/painel.functions";
 import { champion, isStarted, pendingCount, roundName, type Match } from "@/lib/bracket";
 import { Button } from "@/components/ui/button";
@@ -154,6 +154,8 @@ function TournamentView({ t, teams, options, onDeleted }: { t: TournamentDTO; te
   const router = useRouter();
   const finish = useServerFn(finishTournament);
   const remove = useServerFn(deleteTournament);
+  const restart = useServerFn(restartTournament);
+  const [restarting, setRestarting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pending = pendingCount(t.bracket);
@@ -164,6 +166,13 @@ function TournamentView({ t, teams, options, onDeleted }: { t: TournamentDTO; te
   async function act(fn: () => Promise<unknown>) {
     setError(null);
     try { await fn(); await router.invalidate(); } catch (e) { setError(e instanceof Error ? e.message : "Algo deu errado."); }
+  }
+
+  async function recomeçar() {
+    if (restarting || !window.confirm(`Recomeçar o campeonato "${t.name}"? Todos os placares e o campeão serão apagados. As mesmas ${t.participantIds.length} duplas serão mantidas em um novo sorteio. Esta ação não pode ser desfeita.`)) return;
+    setRestarting(true);
+    await act(() => restart({ data: { id: t.id, version: t.version, confirmWipe: true } }));
+    setRestarting(false);
   }
 
   if (editing) return <Setup options={options} existing={t} onDone={() => setEditing(false)} onCancel={() => setEditing(false)} />;
@@ -191,6 +200,9 @@ function TournamentView({ t, teams, options, onDeleted }: { t: TournamentDTO; te
             onClick={() => act(() => finish({ data: { id: t.id, version: t.version } }))}>Finalizar campeonato</Button>
         )}
         <Button size="sm" variant="arenaOutline" onClick={() => setEditing(true)}>Editar duplas / gerar de novo</Button>
+        <Button size="sm" variant="arenaOutline" disabled={restarting} onClick={() => void recomeçar()}>
+          <Shuffle className="h-4 w-4" aria-hidden="true" />{restarting ? "Sorteando…" : "Recomeçar campeonato"}
+        </Button>
         <Button size="sm" variant="destructive" onClick={() => {
           if (window.confirm(`Apagar o campeonato "${t.name}"?`)) void act(async () => { await remove({ data: { id: t.id } }); onDeleted(); });
         }}>Apagar</Button>
