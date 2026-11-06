@@ -1,4 +1,5 @@
 # Campeonatos mata-mata
+- [x] Substituir a marca anterior por ML em textos, imagens e metadados, preservando campos legados do banco; páginas, painel e exportação verificados.
 - [x] Botão "Tabela ao vivo" na página inicial (cabeçalho e destaque inicial) levando a /tabela.
 - [x] Adicionar recomeço confirmado com novo sorteio das mesmas duplas e verificar suas regras.
 - [x] Integrar seleção de duplas reais e gerenciamento de campeonatos ao painel.

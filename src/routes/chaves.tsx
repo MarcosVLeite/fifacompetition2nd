@@ -13,10 +13,10 @@ export const Route = createFileRoute("/chaves")({
   loader: () => getTournaments(),
   head: () => ({
     meta: [
-      { title: "Chaves do campeonato | CNA FIFA COMPETITION" },
+      { title: "Chaves do campeonato | ML FIFA COMPETITION" },
       { name: "description", content: "Organização das chaves mata-mata do campeonato (acesso restrito)." },
-      { property: "og:title", content: "Chaves do campeonato | CNA FIFA COMPETITION" },
-      { property: "og:description", content: "Chaves mata-mata do CNA FIFA COMPETITION." },
+      { property: "og:title", content: "Chaves do campeonato | ML FIFA COMPETITION" },
+      { property: "og:description", content: "Chaves mata-mata do ML FIFA COMPETITION." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },

@@ -55,7 +55,7 @@ export interface TeamRegistrationRow {
   player1Name: string;
   player2Name: string;
   phone: string;
-  isCnaStudent: boolean;
+  isMlStudent: boolean;
   isBlocked: boolean;
   blockReason: string | null;
   orderCode: string;
@@ -79,7 +79,7 @@ async function loadRegistrations(): Promise<TeamRegistrationRow[]> {
     player1Name: row.player1_name,
     player2Name: row.player2_name,
     phone: row.phone,
-    isCnaStudent: row.is_cna_student,
+    isMlStudent: row.is_cna_student,
     isBlocked: row.is_blocked,
     blockReason: row.block_reason,
     orderCode: row.order_code ?? "",
@@ -158,7 +158,7 @@ function validateUpdate(input: unknown) {
   if (player2Name.length < 3 || player2Name.length > 100) throw new Error("Nome do jogador 2 inválido.");
   const digits = phone.replace(/\D/g, "");
   if (digits.length < 10 || digits.length > 13) throw new Error("Telefone inválido (inclua o DDD).");
-  return { id, player1Name, player2Name, phone, isCnaStudent: d?.["isCnaStudent"] === true };
+  return { id, player1Name, player2Name, phone, isMlStudent: d?.["isMlStudent"] === true };
 }
 
 export const updateTeamRegistration = createServerFn({ method: "POST" })
@@ -172,7 +172,7 @@ export const updateTeamRegistration = createServerFn({ method: "POST" })
         player1_name: data.player1Name,
         player2_name: data.player2Name,
         phone: data.phone,
-        is_cna_student: data.isCnaStudent,
+        is_cna_student: data.isMlStudent,
       })
       .eq("id", data.id);
     if (error) throw new Error("Não foi possível salvar as alterações.");

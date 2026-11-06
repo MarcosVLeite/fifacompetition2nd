@@ -17,3 +17,4 @@
 - Pix payments are manual: public server fns in `src/lib/pagamento.functions.ts` (create registration → order_code, "Já paguei" verified by code+phone, status lookup by code) use the service-role client; receipts go to the private `comprovantes` bucket and are only shown to the organizer via short signed URLs behind the painel gate; only the gated `setPaymentStatus` can confirm/refuse.
 - Tournament restarts use a dedicated gated server function that reads stored participants, validates eligibility, and writes the fresh bracket through optimistic version checking; clients cannot substitute participants.
 - Construct encrypted gate session configuration during each server request because Worker secrets are injected per request.
+- Branding changes rename application-facing student properties only; preserve legacy database column identifiers and migration history to keep stored registrations and the deployed app compatible.
