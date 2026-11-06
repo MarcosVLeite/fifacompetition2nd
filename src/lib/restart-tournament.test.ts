@@ -32,7 +32,7 @@ const call = (confirmWipe = true) => restartTournament({ data: { id, version: 7,
 beforeEach(() => {
   const initial = generateBracket(participants, () => 0.5);
   const started = setResult(initial, initial.matches.find(m => !m.bye)?.id ?? "", 3, 1);
-  Object.assign(state, { unlocked: true, eligible: true, conflict: false, reads: 0, patch: {}, row: { id, name: "CNA", status: "finalizado", participant_ids: participants, bracket: started, version: 7, created_at: "2026-10-22" } });
+  Object.assign(state, { unlocked: true, eligible: true, conflict: false, reads: 0, patch: {}, row: { id, name: "ML", status: "finalizado", participant_ids: participants, bracket: started, version: 7, created_at: "2026-10-22" } });
 });
 describe("restartTournament", () => {
   it("requires explicit confirmation before deleting results", async () => {
@@ -47,7 +47,7 @@ describe("restartTournament", () => {
   it("keeps exactly the same six teams and clears scores, later rounds and champion", async () => {
     const result = await call();
     expect(result.participantIds).toEqual(participants);
-    expect(result.name).toBe("CNA");
+    expect(result.name).toBe("ML");
     expect(result.status).toBe("aguardando");
     expect(result.version).toBe(8);
     expect(result.bracket.matches.filter(m => m.round === 0).flatMap(m => [m.a, m.b]).filter(Boolean).sort()).toEqual([...participants].sort());

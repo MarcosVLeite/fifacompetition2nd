@@ -11,9 +11,9 @@ export const Route = createFileRoute("/acompanhar")({
   validateSearch: z.object({ codigo: z.string().optional() }),
   head: () => ({
     meta: [
-      { title: "Acompanhar inscrição | CNA FIFA COMPETITION" },
+      { title: "Acompanhar inscrição | ML FIFA COMPETITION" },
       { name: "description", content: "Consulte o status do pagamento da inscrição da sua dupla pelo código." },
-      { property: "og:title", content: "Acompanhar inscrição | CNA FIFA COMPETITION" },
+      { property: "og:title", content: "Acompanhar inscrição | ML FIFA COMPETITION" },
       { property: "og:description", content: "Consulte o status do pagamento da sua dupla." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

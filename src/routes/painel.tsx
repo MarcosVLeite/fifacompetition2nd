@@ -32,7 +32,7 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
     player1Name: row.player1Name,
     player2Name: row.player2Name,
     phone: row.phone,
-    isCnaStudent: row.isCnaStudent,
+    isMlStudent: row.isMlStudent,
   });
 
   async function run(fn: () => Promise<unknown>) {
@@ -86,9 +86,9 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
               onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })} />
           </td>
           <td className="px-4 py-3">
-            <select aria-label="Alunos do CNA" className={inputCls}
-              value={form.isCnaStudent ? "sim" : "nao"}
-              onChange={(e) => setForm({ ...form, isCnaStudent: e.target.value === "sim" })}>
+            <select aria-label="Alunos do ML" className={inputCls}
+              value={form.isMlStudent ? "sim" : "nao"}
+              onChange={(e) => setForm({ ...form, isMlStudent: e.target.value === "sim" })}>
               <option value="sim">Sim</option>
               <option value="nao">Não</option>
             </select>
@@ -111,7 +111,7 @@ function RegistrationRow({ row }: { row: TeamRegistrationRow }) {
           </td>
           <td className="px-4 py-3 font-medium text-foreground">{row.player2Name}</td>
           <td className="whitespace-nowrap px-4 py-3 text-foreground">{row.phone}</td>
-          <td className="px-4 py-3 text-foreground">{row.isCnaStudent ? "Sim" : "Não"}</td>
+          <td className="px-4 py-3 text-foreground">{row.isMlStudent ? "Sim" : "Não"}</td>
         </>
       )}
       <td className="px-4 py-3 text-xs">
@@ -171,10 +171,10 @@ export const Route = createFileRoute("/painel")({
   loader: () => getTeamRegistrations(),
   head: () => ({
     meta: [
-      { title: "Duplas inscritas | CNA FIFA COMPETITION" },
+      { title: "Duplas inscritas | ML FIFA COMPETITION" },
       { name: "description", content: "Lista de duplas inscritas no campeonato (acesso restrito)." },
-      { property: "og:title", content: "Duplas inscritas | CNA FIFA COMPETITION" },
-      { property: "og:description", content: "Gerenciamento restrito das duplas inscritas no CNA FIFA COMPETITION." },
+      { property: "og:title", content: "Duplas inscritas | ML FIFA COMPETITION" },
+      { property: "og:description", content: "Gerenciamento restrito das duplas inscritas no ML FIFA COMPETITION." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -195,7 +195,7 @@ function formatDateTime(iso: string): string {
 }
 
 function buildCsv(rows: TeamRegistrationRow[]): string {
-  const header = ["Código", "Pagamento", "Data da inscrição", "Jogador 1", "Jogador 2", "Telefone", "Alunos do CNA", "Status"];
+  const header = ["Código", "Pagamento", "Data da inscrição", "Jogador 1", "Jogador 2", "Telefone", "Alunos do ML", "Status"];
   const lines = rows.map((r) =>
     [
       r.orderCode,
@@ -204,7 +204,7 @@ function buildCsv(rows: TeamRegistrationRow[]): string {
       r.player1Name,
       r.player2Name,
       r.phone,
-      r.isCnaStudent ? "Sim" : "Não",
+      r.isMlStudent ? "Sim" : "Não",
       r.isBlocked ? `Bloqueada: ${r.blockReason ?? ""}` : "Ativa",
     ]
       .map(csvEscape)
@@ -219,7 +219,7 @@ function downloadCsv(rows: TeamRegistrationRow[]) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "duplas-inscritas-cna-fifa-competition.csv";
+  a.download = "duplas-inscritas-ml-fifa-competition.csv";
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -239,8 +239,8 @@ function Painel() {
   const total = registrations.length;
   const blocked = registrations.filter((r) => r.isBlocked).length;
   const active = total - blocked;
-  const cnaStudents = registrations.filter((r) => r.isCnaStudent).length;
-  const cnaPercent = total === 0 ? 0 : Math.round((cnaStudents / total) * 100);
+  const mlStudents = registrations.filter((r) => r.isMlStudent).length;
+  const mlPercent = total === 0 ? 0 : Math.round((mlStudents / total) * 100);
   const estimatedRevenue = active * 20;
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -292,7 +292,7 @@ function Painel() {
               DUPLAS INSCRITAS
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              CNA FIFA COMPETITION — {registrations.length}{" "}
+              ML FIFA COMPETITION — {registrations.length}{" "}
               {registrations.length === 1 ? "dupla inscrita" : "duplas inscritas"}
             </p>
           </div>
@@ -336,11 +336,11 @@ function Painel() {
             </p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-xs text-muted-foreground">Alunos do CNA</p>
+            <p className="text-xs text-muted-foreground">Alunos do ML</p>
             <p className="mt-1 font-display text-2xl text-foreground">
-              {cnaPercent}%{" "}
+              {mlPercent}%{" "}
               <span className="text-base text-muted-foreground">
-                ({cnaStudents} de {total})
+                ({mlStudents} de {total})
               </span>
             </p>
           </div>
@@ -387,7 +387,7 @@ function Painel() {
                   <th className="px-4 py-3 font-medium">Jogador 1</th>
                   <th className="px-4 py-3 font-medium">Jogador 2</th>
                   <th className="px-4 py-3 font-medium">Telefone</th>
-                  <th className="px-4 py-3 font-medium">Alunos do CNA</th>
+                  <th className="px-4 py-3 font-medium">Alunos do ML</th>
                   <th className="px-4 py-3 font-medium">Pagamento</th>
                   <th className="px-4 py-3 font-medium">Ações</th>
                 </tr>

@@ -10,7 +10,7 @@ const registrationSchema = z.object({
   player1: z.string().trim().min(3).max(100),
   player2: z.string().trim().min(3).max(100),
   phone: z.string().trim().refine((p) => digits(p).length >= 10 && digits(p).length <= 13),
-  isCnaStudent: z.boolean(),
+  isMlStudent: z.boolean(),
 });
 
 async function admin() {
@@ -23,7 +23,7 @@ export const createRegistration = createServerFn({ method: "POST" })
     const db = await admin();
     const { data: row, error } = await db
       .from("team_registrations")
-      .insert({ player1_name: data.player1, player2_name: data.player2, phone: data.phone, is_cna_student: data.isCnaStudent })
+      .insert({ player1_name: data.player1, player2_name: data.player2, phone: data.phone, is_cna_student: data.isMlStudent })
       .select("order_code")
       .single();
     if (error || !row?.order_code) throw new Error("Não foi possível enviar sua inscrição. Tente novamente.");

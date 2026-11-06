@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/entrar")({
   head: () => ({
     meta: [
-      { title: "Acesso do organizador | CNA FIFA COMPETITION" },
+      { title: "Acesso do organizador | ML FIFA COMPETITION" },
       { name: "description", content: "Área restrita do organizador do campeonato." },
-      { property: "og:title", content: "Acesso do organizador | CNA FIFA COMPETITION" },
-      { property: "og:description", content: "Área restrita do organizador do CNA FIFA COMPETITION." },
+      { property: "og:title", content: "Acesso do organizador | ML FIFA COMPETITION" },
+      { property: "og:description", content: "Área restrita do organizador do ML FIFA COMPETITION." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -49,7 +49,7 @@ function Unlock() {
           PAINEL DO ORGANIZADOR
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Digite a senha para ver as duplas inscritas na CNA FIFA COMPETITION.
+          Digite a senha para ver as duplas inscritas na ML FIFA COMPETITION.
         </p>
         <label className="mt-6 block text-sm font-medium text-foreground" htmlFor="password">
           Senha

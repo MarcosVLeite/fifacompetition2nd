@@ -15,9 +15,9 @@ export const Route = createFileRoute("/tabela")({
   loader: ({ context }) => context.queryClient.ensureQueryData(tabelaQuery),
   head: () => ({
     meta: [
-      { title: "Tabela do campeonato | CNA FIFA COMPETITION" },
-      { name: "description", content: "Acompanhe ao vivo a chave mata-mata do CNA FIFA COMPETITION: confrontos, placares e a campeã." },
-      { property: "og:title", content: "Tabela do campeonato | CNA FIFA COMPETITION" },
+      { title: "Tabela do campeonato | ML FIFA COMPETITION" },
+      { name: "description", content: "Acompanhe ao vivo a chave mata-mata do ML FIFA COMPETITION: confrontos, placares e a campeã." },
+      { property: "og:title", content: "Tabela do campeonato | ML FIFA COMPETITION" },
       { property: "og:description", content: "Acompanhe ao vivo a chave mata-mata: confrontos, placares e a campeã." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -56,7 +56,7 @@ function Tabela() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="font-display text-3xl text-foreground">TABELA DO CAMPEONATO</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Mata-mata ao vivo — CNA FIFA COMPETITION</p>
+            <p className="mt-1 text-sm text-muted-foreground">Mata-mata ao vivo — ML FIFA COMPETITION</p>
           </div>
           <p className="text-xs text-muted-foreground">
             Atualiza automaticamente{atualizado ? ` · visto às ${atualizado}` : ""} · <Link to="/" className="underline underline-offset-4">Página inicial</Link>
