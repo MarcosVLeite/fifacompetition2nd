@@ -10,7 +10,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { formatPhone } from "@/lib/utils";
 import { createRegistration } from "@/lib/pagamento.functions";
 import { PixPayment } from "@/components/PixPayment";
-import heroAsset from "@/assets/monstros-futebol.png.asset.json";
+import heroAsset from "@/assets/lounge-neon-tv.png.asset.json";
 
 const description = "Monte sua dupla para o ML FIFA COMPETITION em Itapecerica da Serra: 05 de dezembro, 14h. Inscrição R$ 20. Prêmios: R$ 150 para a dupla campeã e descontos no curso.";
 export const Route = createFileRoute("/")({
