@@ -10,7 +10,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { formatPhone } from "@/lib/utils";
 import { createRegistration } from "@/lib/pagamento.functions";
 import { PixPayment } from "@/components/PixPayment";
-import heroAsset from "@/assets/monstros-futebol.png.asset.json";
+import heroAsset from "@/assets/lounge-neon-tv.png.asset.json";
 
 const description = "Monte sua dupla para o ML FIFA COMPETITION em Itapecerica da Serra: 05 de dezembro, 14h. Inscrição R$ 20. Prêmios: R$ 150 para a dupla campeã e descontos no curso.";
 export const Route = createFileRoute("/")({
@@ -96,7 +96,7 @@ function Index() {
 
       <main>
         <section className="hero" aria-labelledby="event-title">
-          <img src={heroAsset.url} alt="Monstros jogando videogame em uma sala iluminada por luzes neon" width={1672} height={941} className="hero-image" fetchPriority="high" />
+          <img src={heroAsset.url} alt="Sala de jogos à noite iluminada por luzes neon azul e roxa, com TV na parede mostrando uma partida de futebol, dois controles sobre a mesa e um troféu dourado na prateleira" width={1536} height={1024} className="hero-image" fetchPriority="high" />
           <div className="hero-stamp">05 DEZ<br /><span className="text-primary">14:00 H</span></div>
           <div className="site-wrap hero-content fade-in">
             <div className="hero-kicker eyebrow">O jogo é em dupla. A emoção é em dobro.</div>
